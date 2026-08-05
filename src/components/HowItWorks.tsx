@@ -1,6 +1,7 @@
 import React from 'react';
 import { PROCESS_STEPS } from '../data/content';
 import { Check, ArrowRight, Building, FileText, CheckSquare, ShieldCheck } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface HowItWorksProps {
   onOpenSubmitForm: () => void;
@@ -31,7 +32,13 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onOpenSubmitForm }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto space-y-4"
+        >
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-teal-400/10 text-teal-300 border border-teal-400/20 uppercase tracking-wider">
             Clear 4-Step Process
           </div>
@@ -41,13 +48,20 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onOpenSubmitForm }) => {
           <p className="text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
             A transparent, organized process designed to respect owner autonomy, legal fair-housing guidelines, and program compliance at every stage.
           </p>
-        </div>
+        </motion.div>
 
         {/* 4 Steps Grid */}
         <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
           
           {PROCESS_STEPS.map((step, idx) => (
-            <div key={step.stepNumber} className="relative flex flex-col justify-between bg-slate-900/90 border border-slate-800 rounded-2xl p-6 hover:border-teal-500/50 transition-all duration-300 shadow-xl group">
+            <motion.div
+              key={step.stepNumber}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: idx * 0.1 }}
+              className="relative flex flex-col justify-between bg-slate-900/90 border border-slate-800 rounded-2xl p-6 hover:border-teal-500/50 transition-all duration-300 shadow-xl group"
+            >
               
               {/* Connecting Line for Large Screens */}
               {idx < PROCESS_STEPS.length - 1 && (
@@ -85,7 +99,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({ onOpenSubmitForm }) => {
                 </span>
               </div>
 
-            </div>
+            </motion.div>
           ))}
 
         </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { SERVICES } from '../data/content';
 import { Home, CalendarClock, ShieldCheck, CheckCircle2, FileText, Sliders, Building, Handshake, ArrowUpRight } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface ServicesProps {
   onOpenSubmitForm: () => void;
@@ -26,7 +27,13 @@ export const Services: React.FC<ServicesProps> = ({ onOpenSubmitForm, onOpenBook
     <section className="py-16 sm:py-24 bg-white text-slate-900 border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-slate-200">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-slate-200"
+        >
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-teal-50 text-teal-800 border border-teal-200 uppercase tracking-wider mb-3">
               Comprehensive NYC Real Estate Services
@@ -38,13 +45,17 @@ export const Services: React.FC<ServicesProps> = ({ onOpenSubmitForm, onOpenBook
           <p className="text-sm text-slate-600 max-w-md">
             Whether managing a single apartment or an extensive multi-family portfolio across New York City, we provide specialized coordination for every stage.
           </p>
-        </div>
+        </motion.div>
 
         {/* 8 Cards Grid */}
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {SERVICES.map((service) => (
-            <div
+          {SERVICES.map((service, index) => (
+            <motion.div
               key={service.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.05 }}
               className="bg-slate-50 border border-slate-200 rounded-2xl p-6 flex flex-col justify-between hover:bg-white hover:border-slate-300 hover:shadow-xl transition-all duration-300 group"
             >
               <div className="space-y-4">
@@ -76,7 +87,7 @@ export const Services: React.FC<ServicesProps> = ({ onOpenSubmitForm, onOpenBook
                   Inquire service <ArrowUpRight className="w-3.5 h-3.5" />
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 

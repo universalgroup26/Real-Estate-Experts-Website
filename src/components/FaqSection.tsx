@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FAQ_ITEMS } from '../data/content';
 import { ChevronDown, HelpCircle, PhoneCall, FileText } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { BUSINESS_INFO } from '../data/content';
 
 interface FaqSectionProps {
@@ -19,7 +20,13 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenBooking }) => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
-        <div className="text-center space-y-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center space-y-4"
+        >
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-slate-900 text-white uppercase tracking-wider">
             Clear Compliant Answers
           </div>
@@ -29,15 +36,19 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenBooking }) => {
           <p className="text-base text-slate-600 font-normal">
             Essential facts for New York City landlords, property managers, and owners exploring rental assistance opportunities.
           </p>
-        </div>
+        </motion.div>
 
         {/* Accordion List */}
         <div className="mt-12 space-y-4">
-          {FAQ_ITEMS.map((item) => {
+          {FAQ_ITEMS.map((item, index) => {
             const isOpen = openId === item.id;
             return (
-              <div
+              <motion.div
                 key={item.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
                 className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm transition-all duration-200"
               >
                 <button
@@ -59,18 +70,32 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenBooking }) => {
                   }`} />
                 </button>
 
-                {isOpen && (
-                  <div className="px-6 pb-6 pt-1 text-sm text-slate-700 leading-relaxed font-sans border-t border-slate-100 bg-slate-50/50 animate-in fade-in duration-200">
-                    <p>{item.answer}</p>
-                  </div>
-                )}
-              </div>
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="px-6 pb-6 pt-1 text-sm text-slate-700 leading-relaxed font-sans border-t border-slate-100 bg-slate-50/50"
+                    >
+                      <p>{item.answer}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             );
           })}
         </div>
 
         {/* Footer Support Card */}
-        <div className="mt-12 bg-white rounded-2xl p-6 border border-slate-200 shadow-md text-center space-y-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mt-12 bg-white rounded-2xl p-6 border border-slate-200 shadow-md text-center space-y-4"
+        >
           <div className="w-12 h-12 rounded-full bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center mx-auto">
             <HelpCircle className="w-6 h-6" />
           </div>
@@ -96,7 +121,7 @@ export const FaqSection: React.FC<FaqSectionProps> = ({ onOpenBooking }) => {
               Schedule 1-on-1 Consultation
             </button>
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </section>

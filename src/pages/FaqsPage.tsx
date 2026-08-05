@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { FAQS } from '../data/content';
 import { ChevronDown, Search, HelpCircle, Phone, MessageSquare, ArrowRight, CheckCircle2, Database } from 'lucide-react';
 import { BUSINESS_INFO } from '../data/content';
@@ -90,11 +91,14 @@ export const FaqsPage: React.FC<FaqsPageProps> = ({ onNavigate, onOpenBooking, o
               No matching questions found for "{searchQuery}". Try searching another keyword or contact Joy Chowdhury directly.
             </div>
           ) : (
-            filteredFaqs.map((faq) => {
+            filteredFaqs.map((faq, idx) => {
               const isOpen = openFaq === faq.id;
               return (
-                <div
+                <motion.div
                   key={faq.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: idx * 0.04 }}
                   className="bg-slate-950 border border-slate-800 rounded-2xl transition-all overflow-hidden"
                 >
                   <button
@@ -112,15 +116,23 @@ export const FaqsPage: React.FC<FaqsPageProps> = ({ onNavigate, onOpenBooking, o
                     <ChevronDown className={`w-5 h-5 text-teal-400 flex-shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                   </button>
 
-                  {isOpen && (
-                    <div className="px-6 pb-6 text-xs text-slate-300 leading-relaxed font-sans border-t border-slate-900 pt-4 space-y-3 animate-in fade-in duration-200">
-                      <p>{faq.answer}</p>
-                      <div className="pt-2 flex items-center gap-2 text-[11px] text-teal-400 font-medium">
-                        <CheckCircle2 className="w-4 h-4" /> Have more specific questions regarding your unit?
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="px-6 pb-6 text-xs text-slate-300 leading-relaxed font-sans border-t border-slate-900 pt-4 space-y-3"
+                      >
+                        <p>{faq.answer}</p>
+                        <div className="pt-2 flex items-center gap-2 text-[11px] text-teal-400 font-medium">
+                          <CheckCircle2 className="w-4 h-4" /> Have more specific questions regarding your unit?
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               );
             })
           )}

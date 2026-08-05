@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Phone, CheckCircle2, ShieldCheck, MapPin, Building2, FileText } from 'lucide-react';
+import { motion } from 'motion/react';
 import { BUSINESS_INFO } from '../data/content';
 
 interface HeroProps {
@@ -18,7 +19,12 @@ export const Hero: React.FC<HeroProps> = ({ onOpenSubmitForm, onOpenBooking }) =
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Left Text Content Column */}
-          <div className="lg:col-span-7 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-7 space-y-6"
+          >
             
             {/* Brokerage & Badge */}
             <div className="inline-flex flex-wrap items-center gap-2 bg-slate-800/90 border border-slate-700/80 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-200 shadow-sm">
@@ -86,10 +92,15 @@ export const Hero: React.FC<HeroProps> = ({ onOpenSubmitForm, onOpenBooking }) =
               <span>Serving landlords and property managers across all five NYC boroughs (Manhattan, Brooklyn, Queens, Bronx, Staten Island).</span>
             </div>
 
-          </div>
+          </motion.div>
 
           {/* Right Image Visual Card Column */}
-          <div className="lg:col-span-5">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="lg:col-span-5"
+          >
             <div className="relative mx-auto max-w-md lg:max-w-none">
               
               {/* Outer Glow Frame */}
@@ -153,7 +164,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenSubmitForm, onOpenBooking }) =
 
               </div>
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </div>

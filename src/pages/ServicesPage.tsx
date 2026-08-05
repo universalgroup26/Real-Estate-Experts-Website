@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import { SERVICES, BENEFIT_CARDS } from '../data/content';
 import { BUSINESS_INFO } from '../data/content';
 import { Home, CalendarClock, ShieldCheck, CheckCircle2, FileText, Sliders, Building, Handshake, ArrowRight, Phone, Check, ShieldAlert, FileCheck, Users, ClipboardCheck, DollarSign } from 'lucide-react';
@@ -118,8 +119,14 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate, onOpenBo
 
           {/* Grid of Detailed Service Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredServices.map(service => (
-              <div key={service.id} className="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-teal-500/40 transition-all shadow-xl space-y-4">
+            {filteredServices.map((service, index) => (
+              <motion.div
+                key={service.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
+                className="bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between hover:border-teal-500/40 transition-all shadow-xl space-y-4"
+              >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
@@ -149,7 +156,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate, onOpenBo
                     Request this service <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

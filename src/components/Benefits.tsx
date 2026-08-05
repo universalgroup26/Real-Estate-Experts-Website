@@ -1,6 +1,7 @@
 import React from 'react';
 import { BENEFIT_CARDS } from '../data/content';
 import { Building2, Users, FileCheck, ClipboardCheck, DollarSign, ArrowRight, ShieldAlert } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface BenefitsProps {
   onOpenSubmitForm: () => void;
@@ -29,7 +30,13 @@ export const Benefits: React.FC<BenefitsProps> = ({ onOpenSubmitForm }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto space-y-4"
+        >
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-slate-900 text-slate-100 uppercase tracking-wider">
             Landlord Advantages
           </div>
@@ -39,13 +46,17 @@ export const Benefits: React.FC<BenefitsProps> = ({ onOpenSubmitForm }) => {
           <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed">
             Professional representation designed to save time, streamline landlord paperwork, and clarify program-supported rental opportunities across New York City.
           </p>
-        </div>
+        </motion.div>
 
         {/* 5 Benefit Cards Grid */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {BENEFIT_CARDS.map((card, index) => (
-            <div
+            <motion.div
               key={card.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
               className={`bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300 flex flex-col justify-between group ${
                 index === 4 ? 'md:col-span-2 lg:col-span-1' : ''
               }`}
@@ -73,7 +84,7 @@ export const Benefits: React.FC<BenefitsProps> = ({ onOpenSubmitForm }) => {
                   Learn detail <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 

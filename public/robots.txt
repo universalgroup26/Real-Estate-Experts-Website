@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Sitemap Location
+Sitemap: https://nyjoy.kw.com/sitemap.xml
+Sitemap: https://nyjoy.kw.com/sitemap.html
+
+# AI Engine Indexing Allowed
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /

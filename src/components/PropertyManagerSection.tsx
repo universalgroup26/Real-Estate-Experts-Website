@@ -1,5 +1,6 @@
 import React from 'react';
-import { Building2, Layers, PhoneCall, Calendar, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Layers, Calendar, CheckCircle2, ArrowRight } from 'lucide-react';
+import { motion } from 'motion/react';
 import { BUSINESS_INFO } from '../data/content';
 
 interface PropertyManagerSectionProps {
@@ -15,7 +16,13 @@ export const PropertyManagerSection: React.FC<PropertyManagerSectionProps> = ({ 
       <div className="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 bg-[#D12027]/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="bg-slate-900/90 border border-slate-700/80 rounded-3xl p-8 sm:p-12 shadow-2xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="bg-slate-900/90 border border-slate-700/80 rounded-3xl p-8 sm:p-12 shadow-2xl"
+        >
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
@@ -30,7 +37,7 @@ export const PropertyManagerSection: React.FC<PropertyManagerSectionProps> = ({ 
               </h2>
 
               <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal">
-                Real Estate Experts provides one point of contact for reviewing multiple units, organizing availability details, coordinating potential tenant opportunities, and managing next steps.
+                Joy Chowdhury provides one point of contact for reviewing multiple units, organizing availability details, coordinating potential tenant opportunities, and managing next steps.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs text-slate-200">
@@ -79,7 +86,7 @@ export const PropertyManagerSection: React.FC<PropertyManagerSectionProps> = ({ 
 
           </div>
 
-        </div>
+        </motion.div>
       </div>
     </section>
   );

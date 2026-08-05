@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import { CITYFHEPS_INFO, SECTION8_INFO } from '../data/content';
 import { ShieldCheck, FileText, CheckCircle2, DollarSign, ExternalLink, HelpCircle, Download, BookOpen, AlertCircle, Building, Users } from 'lucide-react';
 

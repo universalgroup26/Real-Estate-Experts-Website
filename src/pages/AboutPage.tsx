@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import { ABOUT_JOY_DATA, BUSINESS_INFO } from '../data/content';
 import { Award, Building, MapPin, Phone, Mail, Globe, CheckCircle2, ShieldCheck, HeartHandshake, Languages, ArrowRight } from 'lucide-react';
 
@@ -49,7 +50,12 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, onOpenBooking 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Visual Profile Avatar Box */}
-          <div className="lg:col-span-5">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-5"
+          >
             <div className="bg-slate-950 border border-slate-800 rounded-3xl p-8 space-y-6 shadow-2xl relative overflow-hidden">
               <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-[#D12027] via-teal-500 to-teal-300 p-1 mx-auto">
                 <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center text-3xl font-serif font-bold text-white">
@@ -86,7 +92,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, onOpenBooking 
                 {BUSINESS_INFO.kwIndependentDisclaimer}
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Detailed Biography & Philosophy */}
           <div className="lg:col-span-7 space-y-6">

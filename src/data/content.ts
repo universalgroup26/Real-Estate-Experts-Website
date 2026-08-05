@@ -1,7 +1,7 @@
 import { BenefitCard, FaqItem, ServiceCard, StepItem } from '../types';
 
 export const BUSINESS_INFO = {
-  brand: 'Real Estate Experts',
+  brand: 'Joy Chowdhury',
   agentName: 'Joy Chowdhury',
   title: 'Licensed Real Estate Salesperson',
   brokerage: 'Keller Williams Realty Landmark II',
@@ -12,7 +12,7 @@ export const BUSINESS_INFO = {
   address: '75-35 31st Ave, Suite 202, Jackson Heights, NY 11370',
   market: 'All five boroughs of New York City (Manhattan, Brooklyn, Queens, Bronx, Staten Island)',
   kwIndependentDisclaimer: 'Each office is independently owned and operated.',
-  complianceDisclaimer: 'Real Estate Experts and Keller Williams Realty Landmark II are not affiliated with or endorsed by NYC HRA/DSS, NYCHA, HUD, or any government agency. Program eligibility, payment amounts, tenant contributions, rent reasonableness, utility allowances, documentation, inspection, and approval requirements apply. Information is provided for general educational purposes and may change. Equal Housing Opportunity.',
+  complianceDisclaimer: 'Joy Chowdhury and Keller Williams Realty Landmark II are not affiliated with or endorsed by NYC HRA/DSS, NYCHA, HUD, or any government agency. Program eligibility, payment amounts, tenant contributions, rent reasonableness, utility allowances, documentation, inspection, and approval requirements apply. Information is provided for general educational purposes and may change. Equal Housing Opportunity.',
 };
 
 export const BENEFIT_CARDS: BenefitCard[] = [

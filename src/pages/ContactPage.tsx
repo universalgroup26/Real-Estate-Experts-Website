@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import { BookingCalendar } from '../components/BookingCalendar';
 import { BUSINESS_INFO } from '../data/content';
 import { Phone, Mail, MapPin, Globe, Clock, CheckCircle2, MessageSquare, Send, Languages, Building } from 'lucide-react';

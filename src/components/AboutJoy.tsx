@@ -1,5 +1,6 @@
 import React from 'react';
 import { Phone, Mail, Globe, MapPin, Building, ShieldCheck, ExternalLink } from 'lucide-react';
+import { motion } from 'motion/react';
 import { BUSINESS_INFO } from '../data/content';
 
 interface AboutJoyProps {
@@ -15,7 +16,13 @@ export const AboutJoy: React.FC<AboutJoyProps> = ({ onOpenBooking, onOpenSubmitF
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Left Column: Joy Profile Card */}
-          <div className="lg:col-span-5">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-5"
+          >
             <div className="bg-gradient-to-br from-slate-900 via-[#0B192C] to-slate-900 text-white rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl relative overflow-hidden">
               
               {/* KW Badge Top Right */}
@@ -112,10 +119,16 @@ export const AboutJoy: React.FC<AboutJoyProps> = ({ onOpenBooking, onOpenSubmitF
               </div>
 
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: Bio Content */}
-          <div className="lg:col-span-7 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="lg:col-span-7 space-y-6"
+          >
             
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-800 border border-slate-200 uppercase tracking-wider">
               Licensed NYC Real Estate Professional
@@ -127,7 +140,7 @@ export const AboutJoy: React.FC<AboutJoyProps> = ({ onOpenBooking, onOpenSubmitF
 
             <div className="space-y-4 text-base text-slate-700 leading-relaxed font-sans">
               <p>
-                Joy Chowdhury is a Licensed Real Estate Salesperson with Keller Williams Realty Landmark II. Through Real Estate Experts, Joy helps New York City landlords and property managers review rental opportunities, coordinate potential tenant matches, and navigate applicable paperwork, scheduling, and inspection steps.
+                Joy Chowdhury is a Licensed Real Estate Salesperson with Keller Williams Realty Landmark II in Queens, NY. Joy helps New York City landlords and property managers review rental opportunities, coordinate potential tenant matches, and navigate applicable paperwork, scheduling, and inspection steps.
               </p>
               <p>
                 The approach is professional, responsive, and focused on helping owners understand each stage before making a decision.
@@ -164,7 +177,7 @@ export const AboutJoy: React.FC<AboutJoyProps> = ({ onOpenBooking, onOpenSubmitF
               </div>
             </div>
 
-          </div>
+          </motion.div>
 
         </div>
 

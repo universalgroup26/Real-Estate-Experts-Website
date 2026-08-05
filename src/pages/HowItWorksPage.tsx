@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { HOW_IT_WORKS_STEPS, BUSINESS_INFO } from '../data/content';
 import { ArrowRight, CheckCircle2, Clock, FileCheck, ShieldAlert, Building, Phone, Calendar, Download } from 'lucide-react';
+import { LandlordMindmap } from '../components/LandlordMindmap';
 
 interface HowItWorksPageProps {
   onNavigate: (page: string) => void;
@@ -81,74 +83,92 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate, onOp
           </div>
 
           {/* Active Step Detailed Display Card */}
-          {(() => {
-            const current = HOW_IT_WORKS_STEPS.find(s => s.stepNumber === activeStep)!;
-            return (
-              <div className="bg-slate-950 border border-slate-800 rounded-3xl p-8 sm:p-12 space-y-6 shadow-2xl">
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
-                  <div className="space-y-1">
-                    <span className="text-xs font-bold text-teal-400 uppercase tracking-wider">
-                      Step {current.stepNumber} Breakdown
-                    </span>
-                    <h3 className="text-2xl sm:text-3xl font-serif font-bold text-white">
-                      {current.title}
-                    </h3>
-                  </div>
+          <AnimatePresence mode="wait">
+            {(() => {
+              const current = HOW_IT_WORKS_STEPS.find(s => s.stepNumber === activeStep)!;
+              return (
+                <motion.div
+                  key={activeStep}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.3 }}
+                  className="bg-slate-950 border border-slate-800 rounded-3xl p-8 sm:p-12 space-y-6 shadow-2xl"
+                >
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+                    <div className="space-y-1">
+                      <span className="text-xs font-bold text-teal-400 uppercase tracking-wider">
+                        Step {current.stepNumber} Breakdown
+                      </span>
+                      <h3 className="text-2xl sm:text-3xl font-serif font-bold text-white">
+                        {current.title}
+                      </h3>
+                    </div>
 
-                  <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-xs font-medium text-slate-300">
-                    <Clock className="w-4 h-4 text-teal-400" />
-                    <span>Estimated Duration: <strong className="text-white">{current.timeline}</strong></span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                  <div className="lg:col-span-7 space-y-4">
-                    <p className="text-sm text-slate-200 leading-relaxed font-sans">
-                      {current.description}
-                    </p>
-
-                    <div className="space-y-2 pt-2">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Key Actions Handled:</h4>
-                      <ul className="space-y-2 text-xs text-slate-300">
-                        {current.details.map((detail, idx) => (
-                          <li key={idx} className="flex items-start gap-2.5 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-                            <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
-                            <span>{detail}</span>
-                          </li>
-                        ))}
-                      </ul>
+                    <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-xs font-medium text-slate-300">
+                      <Clock className="w-4 h-4 text-teal-400" />
+                      <span>Estimated Duration: <strong className="text-white">{current.timeline}</strong></span>
                     </div>
                   </div>
 
-                  <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 text-xs">
-                    <div className="flex items-center gap-2 border-b border-slate-800 pb-3 font-serif font-bold text-white text-sm">
-                      <FileCheck className="w-4 h-4 text-[#D12027]" />
-                      <span>Requirements & Paperwork</span>
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <div className="lg:col-span-7 space-y-4">
+                      <p className="text-sm text-slate-200 leading-relaxed font-sans">
+                        {current.description}
+                      </p>
+
+                      <div className="space-y-2 pt-2">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Key Actions Handled:</h4>
+                        <ul className="space-y-2 text-xs text-slate-300">
+                          {current.details.map((detail, idx) => (
+                            <li key={idx} className="flex items-start gap-2.5 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                              <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
+                              <span>{detail}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
 
-                    <p className="text-slate-300 text-[11px] leading-relaxed">
-                      Completing this step ensures compliance with NYC housing regulations and pre-qualifies potential voucher paperwork before scheduling inspections.
-                    </p>
+                    <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 text-xs">
+                      <div className="flex items-center gap-2 border-b border-slate-800 pb-3 font-serif font-bold text-white text-sm">
+                        <FileCheck className="w-4 h-4 text-[#D12027]" />
+                        <span>Requirements & Paperwork</span>
+                      </div>
 
-                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <span className="text-[10px] uppercase font-bold text-teal-400">Next Action Step:</span>
-                      <button
-                        onClick={() => {
-                          if (current.stepNumber === 1) onNavigate('submit-vacancy');
-                          else onOpenBooking();
-                        }}
-                        className="w-full py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-teal-400 hover:bg-teal-300 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                      >
-                        {current.stepNumber === 1 ? 'Submit Property Vacancy Now' : 'Schedule Coordination Call'}
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
+                      <p className="text-slate-300 text-[11px] leading-relaxed">
+                        Completing this step ensures compliance with NYC housing regulations and pre-qualifies potential voucher paperwork before scheduling inspections.
+                      </p>
+
+                      <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                        <span className="text-[10px] uppercase font-bold text-teal-400">Next Action Step:</span>
+                        <button
+                          onClick={() => {
+                            if (current.stepNumber === 1) onNavigate('submit-vacancy');
+                            else onOpenBooking();
+                          }}
+                          className="w-full py-2.5 rounded-xl text-xs font-bold text-slate-950 bg-teal-400 hover:bg-teal-300 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                        >
+                          {current.stepNumber === 1 ? 'Submit Property Vacancy Now' : 'Schedule Coordination Call'}
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-              </div>
-            );
-          })()}
+                </motion.div>
+              );
+            })()}
+          </AnimatePresence>
+        </div>
+
+        {/* Interactive Mindmap & Architecture Diagram */}
+        <div className="pt-4">
+          <LandlordMindmap
+            onOpenSubmitForm={() => onNavigate('submit-vacancy')}
+            onOpenBooking={onOpenBooking}
+            onNavigate={onNavigate}
+          />
         </div>
 
         {/* NYC Inspection Walkthrough Guide */}

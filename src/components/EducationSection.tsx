@@ -1,5 +1,6 @@
 import React from 'react';
-import { BookOpen, ShieldCheck, CheckCircle, AlertCircle, FileText, ArrowRight, Info } from 'lucide-react';
+import { BookOpen, ShieldCheck, CheckCircle, FileText, Info } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface EducationSectionProps {
   onRequestGuide: () => void;
@@ -14,7 +15,13 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ onRequestGui
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Left Text */}
-          <div className="lg:col-span-7 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-7 space-y-6"
+          >
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-teal-500/10 text-teal-300 border border-teal-500/20 uppercase tracking-wider">
               Program Clarity & Transparency
             </div>
@@ -70,10 +77,16 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ onRequestGui
               </button>
             </div>
 
-          </div>
+          </motion.div>
 
           {/* Right Informational Card */}
-          <div className="lg:col-span-5">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="lg:col-span-5"
+          >
             <div className="bg-gradient-to-br from-slate-800 to-slate-950 p-6 sm:p-8 rounded-2xl border border-slate-700/80 shadow-2xl space-y-6">
               
               <div className="flex items-center gap-3 border-b border-slate-700 pb-4">
@@ -107,11 +120,11 @@ export const EducationSection: React.FC<EducationSectionProps> = ({ onRequestGui
 
               <div className="bg-slate-900/90 rounded-xl p-4 border border-slate-800 text-[11px] text-slate-400 leading-relaxed">
                 <strong className="text-slate-200 block mb-1">Important Legal Note:</strong>
-                Real Estate Experts and Keller Williams Realty Landmark II are not government agencies. Information provided is for educational purposes only.
+                Joy Chowdhury and Keller Williams Realty Landmark II are not government agencies. Information provided is for educational purposes only.
               </div>
 
             </div>
-          </div>
+          </motion.div>
 
         </div>
 

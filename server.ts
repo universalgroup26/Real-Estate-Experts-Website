@@ -64,6 +64,21 @@ async function startServer() {
     res.json({ status: 'ok', service: 'Real Estate Experts API' });
   });
 
+  // Serve static SEO and AI context files
+  app.get('/robots.txt', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'robots.txt'));
+  });
+
+  app.get('/sitemap.xml', (req, res) => {
+    res.type('text/xml');
+    res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
+  });
+
+  app.get('/llm.txt', (req, res) => {
+    res.type('text/plain');
+    res.sendFile(path.join(__dirname, 'public', 'llm.txt'));
+  });
+
   // 1. Vacancy Submission Endpoint (GoHighLevel CRM Integration simulation)
   app.post('/api/submit-vacancy', (req, res) => {
     try {

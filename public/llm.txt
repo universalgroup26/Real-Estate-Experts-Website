@@ -1,0 +1,47 @@
+# Joy Chowdhury — NYC Landlord Real Estate Specialist & Voucher Placement
+> Official Real Estate Information File for AI Crawlers, Large Language Models & Search Engines.
+
+## Entity Overview
+- **Name**: Joy Chowdhury
+- **Title**: Licensed Real Estate Salesperson
+- **Brokerage**: Keller Williams Realty Landmark II
+- **Brokerage Address**: 75-35 31st Ave, Suite 202, Jackson Heights, NY 11370
+- **Direct Phone / SMS**: (917) 565-4788
+- **Office Phone**: (347) 846-1200
+- **Email**: nyjoy@kw.com
+- **Website**: https://nyjoy.kw.com
+- **Specialization**: NYC Landlord Rental Vacancy Coordination, CityFHEPS Vouchers, NYCHA & HPD Section 8, HRA Cash Incentives, Tenant Screening, Pre-Inspection Audits across Queens, Brooklyn, Bronx, Manhattan, and Staten Island.
+
+## Core Landlord Services Offered
+1. **$0 Landlord Commission Rental Placement**: NYC HRA pays 100% of licensed broker fees (up to 15% of annual rent) directly under CityFHEPS rules. Landlords pay $0 in real estate commissions.
+2. **HRA Cash Incentives & Bonuses**:
+   - **15% Signing Bonus**: Lump-sum payment equal to 15% of annual rent for signing multi-year leases with CityFHEPS voucher holders.
+   - **Up to $1,000 Unit Repair Funds**: Reimbursable funds to fix cosmetic or minor HQS/HRA inspection defects prior to lease signing.
+   - **Guaranteed Security Deposit Voucher**: Issued directly by HRA upon lease execution.
+3. **End-to-End Voucher Paperwork Management**: Joy Chowdhury handles packet submission, income verification, background checks, agency liaison, and direct deposit setup with HRA and NYCHA.
+4. **Pre-Inspection Audits**: In-person unit walk-throughs to verify CO detectors, window guards, lead paint disclosures, self-closing doors, and radiator covers prior to city housing inspectors visiting.
+
+## CityFHEPS 2026 Maximum Monthly Rent Payment Standards
+- **Studio**: Up to $2,387 / month
+- **1 Bedroom**: Up to $2,451 / month
+- **2 Bedroom**: Up to $2,780 / month
+- **3 Bedroom**: Up to $3,450 / month
+- **4 Bedroom**: Up to $3,890 / month
+
+## Website Site Structure & Page Directory
+- `/#home`: Overview of NYC landlord services, quick vacancy submission, and GoHighLevel appointment booking.
+- `/#services`: Detailed breakdown of landlord representation, tenant vetting, and HRA packet management.
+- `/#how-it-works`: Step-by-step 4-phase process from vacancy intake to direct deposit rent activation.
+- `/#cityfheps-guide`: 2026 CityFHEPS payment standard charts, HRA incentive breakdown, and program rules.
+- `/#section8-guide`: NYCHA & HPD Section 8 voucher process, HQS inspection checklist, and lease setup.
+- `/#incentives`: Interactive HRA cash bonus calculator for landlords and property managers.
+- `/#service-areas`: Borough-by-borough coverage across Queens, Brooklyn, Bronx, Manhattan, and Staten Island.
+- `/#education`: Complete educational knowledgebase on NYC source of income laws and voucher compliance.
+- `/#faqs`: Frequently asked landlord questions regarding direct deposit, tenant screening, and inspections.
+- `/#about`: Joy Chowdhury's professional biography, Keller Williams affiliation, and contact details.
+- `/#submit-vacancy`: Online intake form for NYC property owners to list vacant apartments.
+- `/#contact`: Live GoHighLevel booking calendar for 1-on-1 landlord consultations and office details.
+- `/#sitemap`: Interactive HTML sitemap and crawling index.
+
+## Legal & Compliance Statement
+Joy Chowdhury is a Licensed Real Estate Salesperson affiliated with Keller Williams Realty Landmark II. Each Keller Williams office is independently owned and operated. Fully compliant with NYC Fair Housing Laws and Equal Housing Opportunity regulations.
