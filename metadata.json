@@ -1,0 +1,6 @@
+{
+  "name": "Real Estate Experts - NYC Landlord Vacancy Support",
+  "description": "Conversion-focused NYC real estate site for landlords, property managers, CityFHEPS & Section 8 vacancy submission by Joy Chowdhury, Keller Williams Realty Landmark II.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
