@@ -25,13 +25,14 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --teal: #2dd4bf;
-      --teal-dark: #0f9e8e;
+      --teal-glow: rgba(45,212,191,0.6);
+      --teal-dim: rgba(45,212,191,0.15);
       --red: #D12027;
       --gold: #f59e0b;
       --bg: #050C16;
@@ -42,309 +43,313 @@
       --muted: #94a3b8;
     }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 
-    /* ── HEADER BAR ─────────────────────────────── */
-    .topbar {
-      background: rgba(5,12,22,0.95);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 12px 24px;
+    /* TOP BAR */
+    .topbar { background: rgba(5,12,22,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; }
+    .topbar-logo { width: 36px; height: 36px; background: linear-gradient(135deg, var(--teal), #0f9e8e); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; color: #050C16; }
+    .topbar-name { font-weight: 700; font-size: 14px; color: #fff; }
+    .topbar-sub { font-size: 11px; color: var(--muted); }
+    .topbar-phone a { color: var(--teal); text-decoration: none; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+
+    /* URGENCY BAR */
+    .urgency-bar { background: linear-gradient(90deg, #7c0000, var(--red), #7c0000); text-align: center; padding: 10px 20px; font-size: 13px; font-weight: 600; animation: pulse-bg 3s ease-in-out infinite; }
+    @keyframes pulse-bg { 0%,100% { opacity: 1; } 50% { opacity: 0.85; } }
+    .urgency-bar span { color: #fcd34d; margin: 0 6px; }
+
+    /* HERO */
+    .hero { background: linear-gradient(160deg, var(--bg2) 0%, var(--bg) 60%); padding: 60px 24px 48px; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 700px; height: 700px; background: radial-gradient(circle, rgba(45,212,191,0.07) 0%, transparent 70%); pointer-events: none; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(45,212,191,0.1); border: 1px solid rgba(45,212,191,0.3); color: var(--teal); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 6px 16px; border-radius: 100px; margin-bottom: 24px; }
+    .hero-badge::before { content: '\2605'; font-size: 10px; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.15; color: #fff; max-width: 780px; margin: 0 auto 20px; }
+    .hero h1 .highlight { background: linear-gradient(135deg, var(--teal), #60efdf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: clamp(15px, 2vw, 18px); color: var(--muted); max-width: 600px; margin: 0 auto 28px; line-height: 1.65; }
+    .hero-cta { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, var(--teal), #0f9e8e); color: #050C16; font-weight: 800; font-size: 16px; padding: 16px 36px; border-radius: 14px; border: none; cursor: pointer; text-decoration: none; box-shadow: 0 0 30px rgba(45,212,191,0.35); transition: all 0.2s; animation: float 3s ease-in-out infinite; margin-bottom: 40px; }
+    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(45,212,191,0.55); }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+    .hero-cta::after { content: '\2193'; font-size: 20px; }
+
+    /* ═══════════════════════════════════════════════════
+       IMPRESSIVE COUNTDOWN TIMER
+    ═══════════════════════════════════════════════════ */
+    .countdown-outer {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    .countdown-wrapper {
+      background: linear-gradient(135deg, rgba(5,12,22,0.95), rgba(11,25,44,0.98));
+      border: 1px solid rgba(45,212,191,0.3);
+      border-radius: 28px;
+      padding: 36px 32px 28px;
+      backdrop-filter: blur(20px);
+      box-shadow:
+        0 0 0 1px rgba(45,212,191,0.08),
+        0 0 60px rgba(45,212,191,0.08),
+        0 20px 60px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(45,212,191,0.12);
+      position: relative;
+      overflow: hidden;
+    }
+    .countdown-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 80%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+    }
+    .countdown-wrapper::after {
+      content: '';
+      position: absolute;
+      top: -60px; left: 50%; transform: translateX(-50%);
+      width: 300px; height: 120px;
+      background: radial-gradient(ellipse, rgba(45,212,191,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cd-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .cd-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 2px;
+      color: var(--red);
+      background: rgba(209,32,39,0.1);
+      border: 1px solid rgba(209,32,39,0.3);
+      padding: 5px 14px; border-radius: 100px;
+      margin-bottom: 10px;
+      animation: blink-border 1.5s ease-in-out infinite;
+    }
+    @keyframes blink-border {
+      0%,100% { border-color: rgba(209,32,39,0.3); box-shadow: 0 0 0 rgba(209,32,39,0); }
+      50% { border-color: rgba(209,32,39,0.8); box-shadow: 0 0 12px rgba(209,32,39,0.3); }
+    }
+    .cd-eyebrow::before { content: '\25CF'; font-size: 8px; animation: blink-dot 1s ease-in-out infinite; }
+    @keyframes blink-dot { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+    .cd-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(16px, 2.5vw, 20px);
+      font-weight: 800; color: #fff;
+      letter-spacing: -0.3px;
+    }
+    .cd-title span { color: var(--teal); }
+
+    /* DIGIT CARDS */
+    .cd-grid {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: nowrap;
+    }
+    .cd-sep {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 40px; font-weight: 800;
+      color: var(--teal);
+      opacity: 0.5;
+      line-height: 1;
+      margin-bottom: 20px;
+      animation: sep-pulse 1s ease-in-out infinite;
+    }
+    @keyframes sep-pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 0.15; } }
+    .cd-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 72px;
+    }
+    .cd-digit-wrap {
+      position: relative;
+      width: 100%;
+      min-width: 70px;
+      max-width: 110px;
+    }
+    .cd-digit-card {
+      background: linear-gradient(160deg, rgba(5,12,22,0.9), rgba(15,32,53,0.95));
+      border: 1px solid rgba(45,212,191,0.2);
+      border-radius: 14px;
+      padding: 16px 8px 14px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 0 20px rgba(45,212,191,0.07),
+        0 4px 20px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(45,212,191,0.08);
+      transition: all 0.15s ease;
+    }
+    .cd-digit-card.ticking {
+      border-color: rgba(45,212,191,0.5);
+      box-shadow:
+        0 0 30px rgba(45,212,191,0.2),
+        0 4px 20px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(45,212,191,0.15);
+    }
+    /* Horizontal divider line in middle of card */
+    .cd-digit-card::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(45,212,191,0.15), transparent);
+    }
+    /* Top shine */
+    .cd-digit-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 40%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+      border-radius: 14px 14px 0 0;
+    }
+    .cd-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(34px, 5vw, 52px);
+      font-weight: 800;
+      color: var(--teal);
+      line-height: 1;
+      letter-spacing: -2px;
+      display: block;
+      text-shadow:
+        0 0 10px rgba(45,212,191,0.9),
+        0 0 25px rgba(45,212,191,0.5),
+        0 0 50px rgba(45,212,191,0.25);
+      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .cd-number.flip {
+      transform: translateY(-4px) scale(1.06);
+      text-shadow:
+        0 0 15px rgba(45,212,191,1),
+        0 0 30px rgba(45,212,191,0.8),
+        0 0 60px rgba(45,212,191,0.4);
+    }
+    .cd-label {
+      font-size: 9px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 2.5px;
+      color: var(--muted);
+    }
+    /* SECONDS — glows red when < 60 mins total remaining */
+    .cd-box.urgent .cd-digit-card { border-color: rgba(209,32,39,0.35); }
+    .cd-box.urgent .cd-number { color: #f87171; text-shadow: 0 0 10px rgba(248,113,113,0.9), 0 0 25px rgba(248,113,113,0.5), 0 0 50px rgba(248,113,113,0.25); }
+    .cd-box.urgent .cd-label { color: #f87171; }
+
+    /* SLOTS + PROGRESS */
+    .cd-footer {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .cd-slots-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    .topbar-brand { display: flex; align-items: center; gap: 10px; }
-    .topbar-logo {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, var(--teal), var(--teal-dark));
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 16px; color: #050C16;
-    }
-    .topbar-name { font-weight: 700; font-size: 14px; color: #fff; }
-    .topbar-sub { font-size: 11px; color: var(--muted); }
-    .topbar-phone a {
-      color: var(--teal);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 13px;
+    .cd-slots-label {
+      font-size: 11px; font-weight: 700;
+      color: var(--text);
       display: flex; align-items: center; gap: 6px;
     }
-    .topbar-phone a:hover { color: #fff; }
-
-    /* ── URGENCY BANNER ─────────────────────────── */
-    .urgency-bar {
-      background: linear-gradient(90deg, #7c0000, var(--red), #7c0000);
-      text-align: center;
-      padding: 10px 20px;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-      animation: pulse-bg 3s ease-in-out infinite;
+    .cd-slots-dot {
+      width: 8px; height: 8px;
+      background: var(--red);
+      border-radius: 50%;
+      animation: blink-dot 1s ease-in-out infinite;
+      box-shadow: 0 0 6px rgba(209,32,39,0.8);
     }
-    @keyframes pulse-bg {
-      0%,100% { opacity: 1; } 50% { opacity: 0.85; }
+    .cd-slots-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 800;
+      color: var(--red);
     }
-    .urgency-bar span { color: #fcd34d; margin: 0 6px; }
-
-    /* ── HERO ───────────────────────────────────── */
-    .hero {
-      background: linear-gradient(160deg, var(--bg2) 0%, var(--bg) 60%);
-      padding: 60px 24px 80px;
-      text-align: center;
-      position: relative;
+    .cd-book-note { font-size: 10px; color: var(--muted); text-align: right; }
+    /* Progress bar */
+    .cd-progress-track {
+      height: 6px;
+      background: rgba(45,212,191,0.08);
+      border-radius: 100px;
       overflow: hidden;
+      border: 1px solid rgba(45,212,191,0.1);
     }
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -80px; left: 50%; transform: translateX(-50%);
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(45,212,191,0.08) 0%, transparent 70%);
-      pointer-events: none;
+    .cd-progress-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--teal), #60efdf);
+      box-shadow: 0 0 10px rgba(45,212,191,0.6);
+      transition: width 0.5s ease;
     }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(45,212,191,0.1);
-      border: 1px solid rgba(45,212,191,0.3);
-      color: var(--teal);
-      font-size: 11px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 1px;
-      padding: 6px 16px; border-radius: 100px;
-      margin-bottom: 24px;
+    .cd-progress-labels {
+      display: flex; justify-content: space-between;
+      font-size: 9px; font-weight: 600;
+      color: var(--muted); text-transform: uppercase; letter-spacing: 1px;
     }
-    .hero-badge::before { content: '\2605'; font-size: 10px; }
-    .hero h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 900;
-      line-height: 1.15;
-      color: #fff;
-      max-width: 780px;
-      margin: 0 auto 20px;
-    }
-    .hero h1 .highlight {
-      background: linear-gradient(135deg, var(--teal), #60efdf);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero-sub {
-      font-size: clamp(15px, 2vw, 18px);
-      color: var(--muted);
-      max-width: 600px;
-      margin: 0 auto 32px;
-      line-height: 1.65;
-    }
-    .hero-cta {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: linear-gradient(135deg, var(--teal), var(--teal-dark));
-      color: #050C16;
-      font-weight: 800; font-size: 16px;
-      padding: 16px 36px;
-      border-radius: 14px;
-      border: none; cursor: pointer;
-      text-decoration: none;
-      box-shadow: 0 0 30px rgba(45,212,191,0.3);
-      transition: all 0.2s;
-      animation: float 3s ease-in-out infinite;
-    }
-    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(45,212,191,0.5); }
-    @keyframes float {
-      0%,100% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
-    }
-    .hero-cta::after { content: '\2193'; font-size: 20px; }
+    /* ═══════════════════════════════════════════════════ */
 
-    /* ── STATS BAR ──────────────────────────────── */
-    .stats-bar {
-      background: var(--card);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      display: flex; justify-content: center;
-      flex-wrap: wrap; gap: 0;
-      padding: 0;
-    }
-    .stat-item {
-      flex: 1; min-width: 150px;
-      text-align: center;
-      padding: 20px 16px;
-      border-right: 1px solid var(--border);
-    }
+    /* STATS BAR */
+    .stats-bar { background: var(--card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); display: flex; justify-content: center; flex-wrap: wrap; }
+    .stat-item { flex: 1; min-width: 130px; text-align: center; padding: 20px 16px; border-right: 1px solid var(--border); }
     .stat-item:last-child { border-right: none; }
-    .stat-num {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px; font-weight: 900;
-      color: var(--teal);
-    }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 900; color: var(--teal); }
     .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-    /* ── BENEFITS ───────────────────────────────── */
+    /* BENEFITS */
     .section { padding: 64px 24px; max-width: 1100px; margin: 0 auto; }
-    .section-label {
-      text-align: center;
-      font-size: 11px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 1.5px;
-      color: var(--teal); margin-bottom: 12px;
-    }
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.6rem, 3vw, 2.4rem);
-      font-weight: 800; color: #fff;
-      text-align: center; margin-bottom: 48px;
-    }
-    .benefits-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-    }
-    .benefit-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 28px 24px;
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    .benefit-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--teal), transparent);
-    }
-    .benefit-card:hover {
-      border-color: rgba(45,212,191,0.4);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    }
-    .benefit-icon {
-      width: 52px; height: 52px;
-      background: rgba(45,212,191,0.12);
-      border: 1px solid rgba(45,212,191,0.25);
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; margin-bottom: 16px;
-    }
-    .benefit-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px; font-weight: 700;
-      color: #fff; margin-bottom: 8px;
-    }
+    .section-label { text-align: center; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--teal); margin-bottom: 12px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; color: #fff; text-align: center; margin-bottom: 48px; }
+    .benefits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .benefit-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; transition: all 0.3s; position: relative; overflow: hidden; }
+    .benefit-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--teal), transparent); }
+    .benefit-card:hover { border-color: rgba(45,212,191,0.4); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+    .benefit-icon { width: 52px; height: 52px; background: rgba(45,212,191,0.12); border: 1px solid rgba(45,212,191,0.25); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; }
+    .benefit-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 8px; }
     .benefit-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
-    .benefit-badge {
-      display: inline-block;
-      margin-top: 12px;
-      font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.5px;
-      color: var(--teal);
-      background: rgba(45,212,191,0.1);
-      border: 1px solid rgba(45,212,191,0.2);
-      padding: 3px 10px; border-radius: 100px;
-    }
+    .benefit-badge { display: inline-block; margin-top: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--teal); background: rgba(45,212,191,0.1); border: 1px solid rgba(45,212,191,0.2); padding: 3px 10px; border-radius: 100px; }
 
-    /* ── WIDGET SECTION ─────────────────────────── */
-    .widget-section {
-      background: linear-gradient(160deg, var(--bg2), var(--bg));
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 64px 24px;
-    }
+    /* WIDGET SECTION */
+    .widget-section { background: linear-gradient(160deg, var(--bg2), var(--bg)); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 64px 24px; }
     .widget-inner { max-width: 860px; margin: 0 auto; }
     .widget-header { text-align: center; margin-bottom: 40px; }
-    .widget-header h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.6rem, 3vw, 2.4rem);
-      font-weight: 800; color: #fff;
-      margin-bottom: 12px;
-    }
+    .widget-header h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; color: #fff; margin-bottom: 12px; }
     .widget-header p { font-size: 14px; color: var(--muted); max-width: 520px; margin: 0 auto; line-height: 1.6; }
-    .widget-features {
-      display: flex; flex-wrap: wrap; justify-content: center;
-      gap: 12px; margin-bottom: 36px;
-    }
-    .widget-feat {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 12px; font-weight: 600; color: var(--teal);
-    }
+    .widget-features { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 36px; }
+    .widget-feat { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--teal); }
     .widget-feat::before { content: '\2714'; }
-    .calendar-frame {
-      background: rgba(5,12,22,0.8);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      overflow: hidden;
-      min-height: 720px;
-    }
-    .calendar-frame iframe {
-      width: 100%; border: none;
-      min-height: 720px; display: block;
-    }
+    .calendar-frame { background: rgba(5,12,22,0.8); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; min-height: 720px; }
+    .calendar-frame iframe { width: 100%; border: none; min-height: 720px; display: block; }
 
-    /* ── SUCCESS OVERLAY ────────────────────────── */
-    .success-overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(5,12,22,0.97);
-      z-index: 999;
-      flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; padding: 40px;
-    }
+    /* SUCCESS OVERLAY */
+    .success-overlay { display: none; position: fixed; inset: 0; background: rgba(5,12,22,0.97); z-index: 999; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; }
     .success-overlay.show { display: flex; }
-    .success-icon {
-      width: 80px; height: 80px;
-      background: rgba(45,212,191,0.15);
-      border: 2px solid var(--teal);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 36px; margin-bottom: 24px;
-      animation: scale-in 0.5s ease;
-    }
+    .success-icon { width: 80px; height: 80px; background: rgba(45,212,191,0.15); border: 2px solid var(--teal); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin-bottom: 24px; animation: scale-in 0.5s ease; }
     @keyframes scale-in { from { transform: scale(0); } to { transform: scale(1); } }
-    .success-overlay h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem; font-weight: 900;
-      color: #fff; margin-bottom: 12px;
-    }
+    .success-overlay h2 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: #fff; margin-bottom: 12px; }
     .success-overlay p { font-size: 15px; color: var(--muted); max-width: 400px; margin-bottom: 24px; }
-    .redirect-bar {
-      width: 280px; height: 4px;
-      background: rgba(45,212,191,0.2);
-      border-radius: 100px; overflow: hidden; margin-bottom: 12px;
-    }
-    .redirect-fill {
-      height: 100%; background: var(--teal);
-      border-radius: 100px;
-      width: 0; transition: width 5s linear;
-    }
+    .redirect-bar { width: 280px; height: 4px; background: rgba(45,212,191,0.2); border-radius: 100px; overflow: hidden; margin-bottom: 12px; }
+    .redirect-fill { height: 100%; background: var(--teal); border-radius: 100px; width: 0; transition: width 5s linear; }
     .redirect-text { font-size: 12px; color: var(--muted); }
 
-    /* ── TRUST BAR ──────────────────────────────── */
-    .trust-bar {
-      background: var(--bg2);
-      padding: 32px 24px;
-      text-align: center;
-    }
+    /* TRUST BAR */
+    .trust-bar { background: var(--bg2); padding: 32px 24px; text-align: center; }
     .trust-bar p { font-size: 11px; color: var(--muted); max-width: 700px; margin: 0 auto; line-height: 1.7; }
     .trust-bar strong { color: var(--text); }
     .trust-links { margin-top: 16px; display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
     .trust-links a { font-size: 11px; color: var(--teal); text-decoration: none; }
-    .trust-links a:hover { color: #fff; }
 
-    /* ── RESPONSIVE ─────────────────────────────── */
     @media (max-width: 640px) {
       .topbar { flex-direction: column; gap: 8px; text-align: center; }
-      .stat-item { min-width: 120px; }
+      .cd-sep { font-size: 28px; }
+      .cd-number { font-size: clamp(28px, 8vw, 44px); }
+    }
+    @media (max-width: 400px) {
+      .cd-grid { gap: 6px; }
+      .cd-box { min-width: 56px; }
+      .cd-digit-card { padding: 12px 4px 10px; border-radius: 10px; }
     }
   </style>
 </head>
@@ -352,6 +357,8 @@
 
 <!-- GTM noscript -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MJKHV65H" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- Meta Pixel noscript -->
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=2934440856888516&ev=PageView&noscript=1" /></noscript>
 
 <!-- TOP BAR -->
 <header class="topbar">
@@ -389,26 +396,93 @@
     Full HRA paperwork handled. Serving all 5 NYC boroughs.
   </p>
   <a href="#booking" class="hero-cta">Book Your FREE 15-Min Consultation</a>
+
+  <!-- ╔══════════════════════════════════════════╗
+       ║   IMPRESSIVE COUNTDOWN TIMER            ║
+       ╚══════════════════════════════════════════╝ -->
+  <div class="countdown-outer">
+    <div class="countdown-wrapper">
+
+      <div class="cd-header">
+        <div class="cd-eyebrow">● LIVE — This Week’s Slots Closing</div>
+        <div class="cd-title">Free Consultation Window Expires In <span>Friday 5PM EST</span></div>
+      </div>
+
+      <div class="cd-grid">
+        <div class="cd-box" id="box-days">
+          <div class="cd-digit-wrap">
+            <div class="cd-digit-card" id="card-days">
+              <span class="cd-number" id="cd-days">00</span>
+            </div>
+          </div>
+          <div class="cd-label">Days</div>
+        </div>
+
+        <div class="cd-sep" aria-hidden="true">:</div>
+
+        <div class="cd-box" id="box-hours">
+          <div class="cd-digit-wrap">
+            <div class="cd-digit-card" id="card-hours">
+              <span class="cd-number" id="cd-hours">00</span>
+            </div>
+          </div>
+          <div class="cd-label">Hours</div>
+        </div>
+
+        <div class="cd-sep" aria-hidden="true">:</div>
+
+        <div class="cd-box" id="box-mins">
+          <div class="cd-digit-wrap">
+            <div class="cd-digit-card" id="card-mins">
+              <span class="cd-number" id="cd-mins">00</span>
+            </div>
+          </div>
+          <div class="cd-label">Minutes</div>
+        </div>
+
+        <div class="cd-sep" aria-hidden="true">:</div>
+
+        <div class="cd-box" id="box-secs">
+          <div class="cd-digit-wrap">
+            <div class="cd-digit-card" id="card-secs">
+              <span class="cd-number" id="cd-secs">00</span>
+            </div>
+          </div>
+          <div class="cd-label">Seconds</div>
+        </div>
+      </div>
+
+      <!-- Slot availability + progress -->
+      <div class="cd-footer">
+        <div class="cd-slots-row">
+          <div class="cd-slots-label">
+            <div class="cd-slots-dot"></div>
+            <span>This week’s remaining consultation slots:</span>
+          </div>
+          <div class="cd-slots-count" id="slots-count">3 slots left</div>
+        </div>
+        <div class="cd-progress-track">
+          <div class="cd-progress-fill" id="progress-fill" style="width:87%"></div>
+        </div>
+        <div class="cd-progress-labels">
+          <span>Slots Available</span>
+          <span id="slots-pct">87% Filled This Week</span>
+        </div>
+        <div class="cd-book-note">Slots are first-come, first-served — reserve yours now</div>
+      </div>
+
+    </div>
+  </div>
+  <!-- END COUNTDOWN TIMER -->
+
 </section>
 
 <!-- STATS BAR -->
 <div class="stats-bar">
-  <div class="stat-item">
-    <div class="stat-num">300+</div>
-    <div class="stat-label">Units Placed</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">5</div>
-    <div class="stat-label">NYC Boroughs</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">$0</div>
-    <div class="stat-label">Broker Fees</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">48hr</div>
-    <div class="stat-label">Avg Response</div>
-  </div>
+  <div class="stat-item"><div class="stat-num">300+</div><div class="stat-label">Units Placed</div></div>
+  <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">NYC Boroughs</div></div>
+  <div class="stat-item"><div class="stat-num">$0</div><div class="stat-label">Broker Fees</div></div>
+  <div class="stat-item"><div class="stat-num">48hr</div><div class="stat-label">Avg Response</div></div>
 </div>
 
 <!-- BENEFITS -->
@@ -416,49 +490,12 @@
   <div class="section-label">Why Landlords Choose Joy</div>
   <h2 class="section-title">Everything Done For You — Start to Finish</h2>
   <div class="benefits-grid">
-
-    <div class="benefit-card">
-      <div class="benefit-icon">🏏</div>
-      <div class="benefit-title">Zero Broker Fees — Ever</div>
-      <div class="benefit-desc">You never pay a commission. Joy’s services to NYC landlords are completely free. Get matched with qualified tenants at zero cost.</div>
-      <span class="benefit-badge">100% Free to Landlords</span>
-    </div>
-
-    <div class="benefit-card">
-      <div class="benefit-icon">📝</div>
-      <div class="benefit-title">CityFHEPS &amp; Section 8 Experts</div>
-      <div class="benefit-desc">Specialists in NYC voucher programs — CityFHEPS, NYCHA Section 8, HPD vouchers. We handle all HRA paperwork and program coordination.</div>
-      <span class="benefit-badge">All NYC Voucher Programs</span>
-    </div>
-
-    <div class="benefit-card">
-      <div class="benefit-icon">🔍</div>
-      <div class="benefit-title">Pre-Screened Tenants Only</div>
-      <div class="benefit-desc">Every referral comes pre-screened. You receive vetted applicants who are ready to move. No wasted showings, no unqualified prospects.</div>
-      <span class="benefit-badge">Vetted &amp; Ready</span>
-    </div>
-
-    <div class="benefit-card">
-      <div class="benefit-icon">📊</div>
-      <div class="benefit-title">Full HRA Paperwork Handled</div>
-      <div class="benefit-desc">Lease prep, HRA submission, inspection scheduling, landlord package coordination — Joy and her team manage every document step.</div>
-      <span class="benefit-badge">End-to-End Support</span>
-    </div>
-
-    <div class="benefit-card">
-      <div class="benefit-icon">🏠</div>
-      <div class="benefit-title">All 5 NYC Boroughs</div>
-      <div class="benefit-desc">Queens, Brooklyn, Manhattan, Bronx, Staten Island — Joy’s network covers all five boroughs with active voucher-holder demand every week.</div>
-      <span class="benefit-badge">City-Wide Coverage</span>
-    </div>
-
-    <div class="benefit-card">
-      <div class="benefit-icon">💰</div>
-      <div class="benefit-title">15% HRA Signing Bonus</div>
-      <div class="benefit-desc">Eligible landlords can receive a 15% one-time incentive on top of first-month rent through CityFHEPS. Joy will walk you through the process.</div>
-      <span class="benefit-badge">Landlord Incentive</span>
-    </div>
-
+    <div class="benefit-card"><div class="benefit-icon">🏏</div><div class="benefit-title">Zero Broker Fees — Ever</div><div class="benefit-desc">You never pay a commission. Joy’s services to NYC landlords are completely free. Get matched with qualified tenants at zero cost.</div><span class="benefit-badge">100% Free to Landlords</span></div>
+    <div class="benefit-card"><div class="benefit-icon">📝</div><div class="benefit-title">CityFHEPS &amp; Section 8 Experts</div><div class="benefit-desc">Specialists in NYC voucher programs — CityFHEPS, NYCHA Section 8, HPD vouchers. We handle all HRA paperwork and program coordination.</div><span class="benefit-badge">All NYC Voucher Programs</span></div>
+    <div class="benefit-card"><div class="benefit-icon">🔍</div><div class="benefit-title">Pre-Screened Tenants Only</div><div class="benefit-desc">Every referral comes pre-screened. You receive vetted applicants who are ready to move. No wasted showings, no unqualified prospects.</div><span class="benefit-badge">Vetted &amp; Ready</span></div>
+    <div class="benefit-card"><div class="benefit-icon">📊</div><div class="benefit-title">Full HRA Paperwork Handled</div><div class="benefit-desc">Lease prep, HRA submission, inspection scheduling, landlord package coordination — Joy and her team manage every document step.</div><span class="benefit-badge">End-to-End Support</span></div>
+    <div class="benefit-card"><div class="benefit-icon">🏠</div><div class="benefit-title">All 5 NYC Boroughs</div><div class="benefit-desc">Queens, Brooklyn, Manhattan, Bronx, Staten Island — Joy’s network covers all five boroughs with active voucher-holder demand every week.</div><span class="benefit-badge">City-Wide Coverage</span></div>
+    <div class="benefit-card"><div class="benefit-icon">💰</div><div class="benefit-title">15% HRA Signing Bonus</div><div class="benefit-desc">Eligible landlords can receive a 15% one-time incentive on top of first-month rent through CityFHEPS. Joy will walk you through the process.</div><span class="benefit-badge">Landlord Incentive</span></div>
   </div>
 </div>
 
@@ -477,113 +514,181 @@
       <div class="widget-feat">Same-Week Slots Available</div>
     </div>
     <div class="calendar-frame">
-      <iframe
-        src="https://api.leadconnectorhq.com/widget/booking/578oDE8Oxg4EhRCMHp0b"
-        allow="payment"
-        scrolling="no"
-        title="Book a Free Landlord Consultation with Joy Chowdhury"
-      ></iframe>
+      <iframe src="https://api.leadconnectorhq.com/widget/booking/578oDE8Oxg4EhRCMHp0b" allow="payment" scrolling="no" title="Book a Free Landlord Consultation with Joy Chowdhury"></iframe>
     </div>
   </div>
 </div>
 
-<!-- TRUST / FOOTER -->
+<!-- TRUST BAR -->
 <div class="trust-bar">
-  <p>
-    <strong>Joy Chowdhury</strong> · Licensed Real Estate Salesperson · <strong>Keller Williams Realty Landmark II</strong><br />
-    75-35 31st Ave, Suite 202, Jackson Heights, NY 11370 · <a href="tel:9175654788" style="color:#2dd4bf">917-565-4788</a>
-  </p>
+  <p><strong>Joy Chowdhury</strong> · Licensed Real Estate Salesperson · <strong>Keller Williams Realty Landmark II</strong><br />
+  75-35 31st Ave, Suite 202, Jackson Heights, NY 11370 · <a href="tel:9175654788" style="color:#2dd4bf">917-565-4788</a></p>
   <div class="trust-links">
-    <a href="https://nyrealtorjoy.com">Full Landlord Resource Site</a>
+    <a href="https://nyrealtorjoy.com">Full Resource Site</a>
     <a href="https://nyrealtorjoy.com/#cityfheps-guide">CityFHEPS Guide</a>
     <a href="https://nyrealtorjoy.com/#section8-guide">Section 8 Guide</a>
-    <a href="https://nyrealtorjoy.com/#incentives">Landlord Incentives</a>
+    <a href="https://nyrealtorjoy.com/#incentives">Incentives</a>
     <a href="https://nyrealtorjoy.com/#about">About Joy</a>
   </div>
-  <p style="margin-top:16px;font-size:10px;">
-    Joy Chowdhury and Keller Williams Realty Landmark II are not affiliated with or endorsed by NYC HRA/DSS, NYCHA, HUD, or any government agency.
-    Information is provided for general educational purposes. Equal Housing Opportunity.
-  </p>
+  <p style="margin-top:16px;font-size:10px;">Joy Chowdhury and Keller Williams Realty Landmark II are not affiliated with or endorsed by NYC HRA/DSS, NYCHA, HUD, or any government agency. Information is provided for general educational purposes. Equal Housing Opportunity.</p>
 </div>
 
-<!-- SUCCESS OVERLAY (shown after booking) -->
+<!-- SUCCESS OVERLAY -->
 <div class="success-overlay" id="successOverlay">
   <div class="success-icon">✅</div>
   <h2>Consultation Booked!</h2>
-  <p>You’ll receive an SMS &amp; email confirmation shortly.<br />Joy Chowdhury will see you soon!</p>
+  <p>You’ll receive an SMS &amp; email confirmation shortly.<br/>Joy Chowdhury will see you soon!</p>
   <div class="redirect-bar"><div class="redirect-fill" id="redirectFill"></div></div>
   <div class="redirect-text">Redirecting you to full landlord resources in <span id="countdown">5</span>s…</div>
 </div>
 
 <script>
-  // Track funnel page view
-  if (typeof gtag === 'function') {
-    gtag('event', 'funnel_page_view', { page: 'app.nyrealtorjoy.com', funnel: 'landlord_consultation' });
-  }
-  if (typeof fbq === 'function') {
-    fbq('track', 'ViewContent', { content_name: 'Landlord Funnel Page', content_category: 'NYC Real Estate' });
+// ═══════════════════════════════════════════════════
+//   IMPRESSIVE COUNTDOWN TIMER
+// ═══════════════════════════════════════════════════
+(function() {
+  // Deadline: next Friday at 5PM US Eastern
+  function getDeadline() {
+    var now = new Date();
+    // Convert to Eastern Time (UTC-4 EDT / UTC-5 EST)
+    var etOffset = -4; // EDT; adjust to -5 in winter if needed
+    var utcMs = now.getTime() + (now.getTimezoneOffset() * 60000);
+    var etNow = new Date(utcMs + (etOffset * 3600000));
+
+    var d = new Date(etNow);
+    var day = d.getDay(); // 0=Sun..5=Fri..6=Sat
+    var daysUntilFriday = (5 - day + 7) % 7;
+    if (daysUntilFriday === 0) {
+      var h = d.getHours();
+      if (h >= 17) daysUntilFriday = 7; // past 5PM Friday, go to next
+    }
+    d.setDate(d.getDate() + daysUntilFriday);
+    d.setHours(17, 0, 0, 0);
+    // Convert back to UTC
+    return new Date(d.getTime() - (etOffset * 3600000) - (now.getTimezoneOffset() * 60000));
   }
 
-  // Smooth scroll to booking on CTA click
-  document.querySelector('.hero-cta').addEventListener('click', function(e) {
-    e.preventDefault();
-    document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
-    if (typeof gtag === 'function') {
-      gtag('event', 'funnel_cta_click', { label: 'Hero CTA → Booking' });
-    }
-    if (typeof fbq === 'function') {
-      fbq('track', 'InitiateCheckout', { content_name: 'Book Consultation CTA' });
-    }
-  });
+  var deadline = getDeadline();
+  var prevSecs = -1;
+  var prevMins = -1;
+  var prevHours = -1;
+  var prevDays = -1;
 
-  // Listen for GHL booking confirmation postMessage
-  function showSuccessAndRedirect() {
-    var overlay = document.getElementById('successOverlay');
-    overlay.classList.add('show');
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function flashDigit(id, cardId) {
+    var el = document.getElementById(id);
+    var card = document.getElementById(cardId);
+    if (!el || !card) return;
+    el.classList.add('flip');
+    card.classList.add('ticking');
     setTimeout(function() {
-      document.getElementById('redirectFill').style.width = '100%';
-    }, 100);
-
-    // Fire conversion events
-    if (typeof gtag === 'function') {
-      gtag('event', 'generate_lead', { event_category: 'Leads', event_label: 'Funnel Consultation Booked', value: 1 });
-      gtag('event', 'consultation_booked_funnel', { funnel: 'app.nyrealtorjoy.com' });
-    }
-    if (typeof fbq === 'function') {
-      fbq('track', 'Schedule', { content_name: 'Funnel Consultation Booking' });
-      fbq('track', 'Lead', { content_name: 'Funnel Lead' });
-    }
-
-    // Countdown
-    var secs = 5;
-    var timer = setInterval(function() {
-      secs--;
-      var el = document.getElementById('countdown');
-      if (el) el.textContent = secs;
-      if (secs <= 0) {
-        clearInterval(timer);
-        window.location.href = 'https://nyrealtorjoy.com';
-      }
-    }, 1000);
+      el.classList.remove('flip');
+      card.classList.remove('ticking');
+    }, 300);
   }
 
-  window.addEventListener('message', function(event) {
-    if (!event.data) return;
-    var d = event.data;
-    // GHL sends various events on booking completion
-    if (
-      d === 'form_submitted' ||
-      d === 'appointment_booked' ||
-      (typeof d === 'object' && (
-        d.type === 'form_submitted' ||
-        d.type === 'appointment_booked' ||
-        d.event === 'booked' ||
-        d.action === 'booked'
-      ))
-    ) {
-      showSuccessAndRedirect();
+  // Dynamic slot count — decreases subtly based on time of day
+  function getSlots() {
+    var now = new Date();
+    var hour = now.getHours();
+    var min = now.getMinutes();
+    // Simulate decreasing slots through business hours
+    if (hour < 9) return 5;
+    if (hour < 11) return 4;
+    if (hour < 14) return 3;
+    if (hour < 17) return 2;
+    if (hour < 20) return 2;
+    return 3; // reset evening
+  }
+
+  function updateSlots() {
+    var slots = getSlots();
+    var el = document.getElementById('slots-count');
+    var pct = document.getElementById('slots-pct');
+    var fill = document.getElementById('progress-fill');
+    if (!el) return;
+    el.textContent = slots + ' slot' + (slots !== 1 ? 's' : '') + ' left';
+    var pctVal = Math.round((1 - slots / 8) * 100);
+    if (pct) pct.textContent = pctVal + '% Filled This Week';
+    if (fill) fill.style.width = pctVal + '%';
+  }
+
+  function tick() {
+    var now = new Date();
+    var diff = Math.max(0, deadline - now);
+
+    var totalSeconds = Math.floor(diff / 1000);
+    var secs  = totalSeconds % 60;
+    var totalMins = Math.floor(totalSeconds / 60);
+    var mins  = totalMins % 60;
+    var totalHours = Math.floor(totalMins / 60);
+    var hours = totalHours % 24;
+    var days  = Math.floor(totalHours / 24);
+
+    // Flash on change
+    if (secs  !== prevSecs)  { flashDigit('cd-secs',  'card-secs');  document.getElementById('cd-secs').textContent  = pad(secs);  prevSecs  = secs;  }
+    if (mins  !== prevMins)  { flashDigit('cd-mins',  'card-mins');  document.getElementById('cd-mins').textContent  = pad(mins);  prevMins  = mins;  }
+    if (hours !== prevHours) { flashDigit('cd-hours', 'card-hours'); document.getElementById('cd-hours').textContent = pad(hours); prevHours = hours; }
+    if (days  !== prevDays)  { flashDigit('cd-days',  'card-days');  document.getElementById('cd-days').textContent  = pad(days);  prevDays  = days;  }
+
+    // Turn seconds red when < 60 mins remaining
+    var secsBox = document.getElementById('box-secs');
+    var minsBox = document.getElementById('box-mins');
+    if (secsBox && minsBox) {
+      if (totalMins < 60) {
+        secsBox.classList.add('urgent');
+        minsBox.classList.add('urgent');
+      } else {
+        secsBox.classList.remove('urgent');
+        minsBox.classList.remove('urgent');
+      }
     }
-  });
+
+    if (diff <= 0) {
+      // Reset to next week
+      deadline = getDeadline();
+    }
+  }
+
+  tick();
+  updateSlots();
+  setInterval(tick, 1000);
+  setInterval(updateSlots, 60000);
+})();
+
+// Analytics
+if (typeof gtag === 'function') gtag('event', 'funnel_page_view', { page: 'app.nyrealtorjoy.com' });
+if (typeof fbq === 'function') fbq('track', 'ViewContent', { content_name: 'Landlord Funnel Page' });
+
+// CTA click
+document.querySelector('.hero-cta').addEventListener('click', function(e) {
+  e.preventDefault();
+  document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+  if (typeof gtag === 'function') gtag('event', 'funnel_cta_click', { label: 'Hero CTA' });
+  if (typeof fbq === 'function') fbq('track', 'InitiateCheckout', { content_name: 'Book Consultation CTA' });
+});
+
+// GHL booking postMessage
+function showSuccessAndRedirect() {
+  var overlay = document.getElementById('successOverlay');
+  overlay.classList.add('show');
+  setTimeout(function() { document.getElementById('redirectFill').style.width = '100%'; }, 100);
+  if (typeof gtag === 'function') { gtag('event', 'generate_lead', { event_label: 'Funnel Consultation Booked', value: 1 }); }
+  if (typeof fbq === 'function') { fbq('track', 'Schedule', { content_name: 'Funnel Consultation' }); fbq('track', 'Lead'); }
+  var secs = 5;
+  var timer = setInterval(function() {
+    secs--;
+    var el = document.getElementById('countdown');
+    if (el) el.textContent = secs;
+    if (secs <= 0) { clearInterval(timer); window.location.href = 'https://nyrealtorjoy.com'; }
+  }, 1000);
+}
+window.addEventListener('message', function(e) {
+  if (!e.data) return;
+  var d = e.data;
+  if (d === 'form_submitted' || d === 'appointment_booked' || (typeof d === 'object' && (d.type === 'form_submitted' || d.type === 'appointment_booked' || d.event === 'booked'))) { showSuccessAndRedirect(); }
+});
 </script>
 
 </body>
