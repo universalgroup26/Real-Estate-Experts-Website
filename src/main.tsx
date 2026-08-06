@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { trackLeadEvent } from './utils/analytics';
+import { injectSpeedInsights } from '@vercel/speed-insights';
 
 // ─── Global Fetch Interceptor ────────────────────────────────────────────────
 // Automatically fires GA4 + Meta Pixel + Clarity events on successful API calls.
@@ -68,6 +69,9 @@ window.fetch = async (
 
   return response;
 };
+
+// Initialize Vercel Speed Insights
+injectSpeedInsights();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
