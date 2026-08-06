@@ -12,6 +12,11 @@ import { FaqSection } from '../components/FaqSection';
 import { AboutJoy } from '../components/AboutJoy';
 import { VacancyForm } from '../components/VacancyForm';
 import { BookingCalendar } from '../components/BookingCalendar';
+import {
+  fadeUp, slideLeft, slideRight, scaleUp, scaleIn,
+  staggerContainer, staggerCard, staggerSlow,
+  viewport, EASE_OUT_EXPO,
+} from '../utils/animations';
 
 interface HomePageProps {
   onNavigate: (page: string) => void;
@@ -21,6 +26,45 @@ interface HomePageProps {
   onOpenPrivacy: () => void;
   onOpenTerms: () => void;
 }
+
+// Helper: section wrapper with alternating slide direction + divider glow
+const AnimSection: React.FC<{
+  children: React.ReactNode;
+  direction?: 'up' | 'left' | 'right' | 'scale';
+  delay?: number;
+  className?: string;
+}> = ({ children, direction = 'up', delay = 0, className = '' }) => {
+  const variantMap = { up: fadeUp, left: slideLeft, right: slideRight, scale: scaleIn };
+  return (
+    <motion.div
+      variants={variantMap[direction]}
+      initial="hidden"
+      whileInView="visible"
+      viewport={viewport}
+      transition={{ delay, ease: EASE_OUT_EXPO }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// Glowing divider between major sections
+const GlowDivider: React.FC<{ color?: 'teal' | 'red' }> = ({ color = 'teal' }) => (
+  <div className="relative h-[1px] overflow-visible">
+    <div className={`absolute inset-0 ${
+      color === 'teal' ? 'bg-gradient-to-r from-transparent via-teal-500/30 to-transparent'
+                       : 'bg-gradient-to-r from-transparent via-[#D12027]/25 to-transparent'
+    }`} />
+    <motion.div
+      className={`absolute left-1/2 -translate-x-1/2 -top-[3px] w-8 h-[7px] rounded-full ${
+        color === 'teal' ? 'bg-teal-400' : 'bg-[#D12027]'
+      }`}
+      animate={{ opacity: [0.4, 1, 0.4], scaleX: [1, 1.4, 1] }}
+      transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+    />
+  </div>
+);
 
 export const HomePage: React.FC<HomePageProps> = ({
   onNavigate,
@@ -32,35 +76,44 @@ export const HomePage: React.FC<HomePageProps> = ({
 }) => {
   return (
     <div className="space-y-0 overflow-x-hidden">
-      {/* 1. Hero Section */}
+
+      {/* 1. Hero — full parallax (self-animated) */}
       <Hero
         onOpenSubmitForm={() => onNavigate('submit-vacancy')}
         onOpenBooking={() => onNavigate('contact')}
       />
 
-      {/* 2. Trust Bar */}
-      <TrustBar />
+      <GlowDivider color="teal" />
 
-      {/* 3. Landlord Benefits Section */}
+      {/* 2. Trust Bar — fade up fast */}
+      <AnimSection direction="up">
+        <TrustBar />
+      </AnimSection>
+
+      <GlowDivider color="teal" />
+
+      {/* 3. Benefits — stagger cards from left */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.6 }}
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={viewport}
       >
-        <Benefits
-          onOpenSubmitForm={() => onNavigate('submit-vacancy')}
-        />
+        <AnimSection direction="left">
+          <Benefits onOpenSubmitForm={() => onNavigate('submit-vacancy')} />
+        </AnimSection>
       </motion.div>
 
-      {/* 4. Interactive Landlord Rental Mindmap */}
+      <GlowDivider color="red" />
+
+      {/* 4. Mindmap — scale in from center */}
       <section className="py-12 sm:py-20 bg-[#050C16] border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.6 }}
+            variants={scaleUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewport}
           >
             <LandlordMindmap
               onOpenSubmitForm={() => onNavigate('submit-vacancy')}
@@ -71,92 +124,78 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* 5. How It Works Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.6 }}
-      >
-        <HowItWorks
-          onOpenSubmitForm={() => onNavigate('how-it-works')}
-        />
-      </motion.div>
+      <GlowDivider color="teal" />
 
-      {/* 6. Services Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.6 }}
-      >
+      {/* 5. How It Works — slide from right */}
+      <AnimSection direction="right" delay={0.05}>
+        <HowItWorks onOpenSubmitForm={() => onNavigate('how-it-works')} />
+      </AnimSection>
+
+      <GlowDivider color="red" />
+
+      {/* 6. Services — slide from left */}
+      <AnimSection direction="left" delay={0.05}>
         <Services
           onOpenSubmitForm={() => onNavigate('services')}
           onOpenBooking={() => onNavigate('contact')}
         />
-      </motion.div>
+      </AnimSection>
 
-      {/* 7. CityFHEPS & Section 8 Education Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.6 }}
-      >
+      <GlowDivider color="teal" />
+
+      {/* 7. Education — scale in */}
+      <AnimSection direction="scale" delay={0.08}>
         <EducationSection
           onRequestGuide={onRequestGuide}
           onOpenBooking={() => onNavigate('education')}
         />
-      </motion.div>
+      </AnimSection>
 
-      {/* 8. Property Manager Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.6 }}
-      >
+      <GlowDivider color="red" />
+
+      {/* 8. Property Manager — slide from right */}
+      <AnimSection direction="right" delay={0.05}>
         <PropertyManagerSection
           onOpenBooking={() => onNavigate('contact')}
           onOpenSubmitForm={() => onNavigate('submit-vacancy')}
         />
-      </motion.div>
+      </AnimSection>
 
-      {/* 9. FAQ Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.6 }}
-      >
-        <FaqSection
-          onOpenBooking={() => onNavigate('faqs')}
-        />
-      </motion.div>
+      <GlowDivider color="teal" />
 
-      {/* 10. About Joy Chowdhury */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.6 }}
-      >
+      {/* 9. FAQ — fade up */}
+      <AnimSection direction="up" delay={0.05}>
+        <FaqSection onOpenBooking={() => onNavigate('faqs')} />
+      </AnimSection>
+
+      <GlowDivider color="red" />
+
+      {/* 10. About Joy — slide from left */}
+      <AnimSection direction="left" delay={0.05}>
         <AboutJoy
           onOpenBooking={() => onNavigate('about')}
           onOpenSubmitForm={() => onNavigate('submit-vacancy')}
         />
-      </motion.div>
+      </AnimSection>
 
-      {/* 11. Primary Action 1: Vacancy Submission Form */}
-      <VacancyForm
-        onOpenBooking={() => onNavigate('contact')}
-        onOpenPrivacy={onOpenPrivacy}
-        onOpenTerms={onOpenTerms}
-      />
+      <GlowDivider color="teal" />
 
-      {/* 12. Primary Action 2: GoHighLevel Calendar Booking Section */}
-      <BookingCalendar />
+      {/* 11. Vacancy Form — scale in */}
+      <AnimSection direction="scale" delay={0.06}>
+        <VacancyForm
+          onOpenBooking={() => onNavigate('contact')}
+          onOpenPrivacy={onOpenPrivacy}
+          onOpenTerms={onOpenTerms}
+        />
+      </AnimSection>
+
+      <GlowDivider color="red" />
+
+      {/* 12. Booking Calendar — slide from right */}
+      <AnimSection direction="right" delay={0.06}>
+        <BookingCalendar />
+      </AnimSection>
+
     </div>
   );
 };
-
