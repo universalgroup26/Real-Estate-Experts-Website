@@ -6,6 +6,72 @@ import { createServer as createViteServer } from 'vite';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// ─── GoHighLevel CRM API ─────────────────────────────────────────────────────
+const GHL_API_BASE = 'https://services.leadconnectorhq.com';
+const GHL_LOCATION_ID = process.env.GHL_LOCATION_ID || '';
+const GHL_PRIVATE_TOKEN = process.env.GHL_PRIVATE_TOKEN || '';
+
+/**
+ * Create a real contact in GoHighLevel CRM.
+ * Requires GHL_LOCATION_ID and GHL_PRIVATE_TOKEN environment variables.
+ * Get your Private Integration Token from: GHL Settings → Integrations → Private Integrations
+ */
+const createGHLContact = async (data: {
+  fullName?: string;
+  phone?: string;
+  email?: string;
+  tags?: string[];
+  source?: string;
+  borough?: string;
+  notes?: string;
+}) => {
+  if (!GHL_LOCATION_ID || !GHL_PRIVATE_TOKEN) {
+    console.warn('[GHL] ⚠️  Missing GHL_LOCATION_ID or GHL_PRIVATE_TOKEN — contact NOT created in CRM.');
+    console.warn('[GHL]     Add GHL_PRIVATE_TOKEN to Vercel env vars (Settings → Integrations → Private Integrations).');
+    return null;
+  }
+
+  const nameParts = (data.fullName || '').split(' ');
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ') || '';
+
+  try {
+    const res = await fetch(`${GHL_API_BASE}/contacts/`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${GHL_PRIVATE_TOKEN}`,
+        'Content-Type': 'application/json',
+        Version: '2021-07-28',
+      },
+      body: JSON.stringify({
+        locationId: GHL_LOCATION_ID,
+        firstName,
+        lastName,
+        phone: data.phone || '',
+        email: data.email || '',
+        source: data.source || 'Website',
+        tags: data.tags || ['Website Lead'],
+        ...(data.borough ? { customField: [{ key: 'borough', field_value: data.borough }] } : {}),
+      }),
+    });
+
+    if (res.ok) {
+      const result = await res.json();
+      const contactId = result.contact?.id || result.id;
+      console.log(`[GHL] ✅ Contact created: ${contactId} — ${firstName} ${lastName} (${data.email})`);
+      return result.contact || result;
+    } else {
+      const errText = await res.text();
+      console.error(`[GHL] ❌ Failed to create contact (HTTP ${res.status}):`, errText);
+      return null;
+    }
+  } catch (err) {
+    console.error('[GHL] ❌ Network error creating contact:', err);
+    return null;
+  }
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
 interface VacancyLead {
   id: string;
   fullName: string;
@@ -34,6 +100,7 @@ interface VacancyLead {
   utmCampaign?: string;
   pageUrl?: string;
   createdAt: string;
+  ghlContactId?: string;
 }
 
 interface ConsultationBooking {
@@ -48,6 +115,7 @@ interface ConsultationBooking {
   notes?: string;
   status: string;
   createdAt: string;
+  ghlContactId?: string;
 }
 
 const leadsStore: VacancyLead[] = [];
@@ -59,28 +127,23 @@ async function startServer() {
 
   app.use(express.json());
 
-  // API Endpoints
+  // Health check
   app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', service: 'Real Estate Experts API', aiProvider: 'OpenRouter (openai/gpt-4o)' });
+    res.json({
+      status: 'ok',
+      service: 'Real Estate Experts API',
+      aiProvider: 'OpenRouter (openai/gpt-4o)',
+      ghlConnected: Boolean(GHL_LOCATION_ID && GHL_PRIVATE_TOKEN),
+    });
   });
 
-  // Serve static SEO and AI context files
-  app.get('/robots.txt', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'robots.txt'));
-  });
+  // Static SEO files
+  app.get('/robots.txt', (req, res) => res.sendFile(path.join(__dirname, 'public', 'robots.txt')));
+  app.get('/sitemap.xml', (req, res) => { res.type('text/xml'); res.sendFile(path.join(__dirname, 'public', 'sitemap.xml')); });
+  app.get('/llm.txt', (req, res) => { res.type('text/plain'); res.sendFile(path.join(__dirname, 'public', 'llm.txt')); });
 
-  app.get('/sitemap.xml', (req, res) => {
-    res.type('text/xml');
-    res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
-  });
-
-  app.get('/llm.txt', (req, res) => {
-    res.type('text/plain');
-    res.sendFile(path.join(__dirname, 'public', 'llm.txt'));
-  });
-
-  // 1. Vacancy Submission Endpoint (GoHighLevel CRM Integration)
-  app.post('/api/submit-vacancy', (req, res) => {
+  // 1. Vacancy Submission — stores locally AND creates real GHL contact
+  app.post('/api/submit-vacancy', async (req, res) => {
     try {
       const body = req.body;
       if (!body.fullName || !body.mobilePhone || !body.email || !body.borough) {
@@ -95,6 +158,18 @@ async function startServer() {
       } else if (body.availability && body.availability.includes('Future')) {
         leadTypeTag = 'Future Vacancy';
       }
+
+      const tags = ['Website - Landlord Lead', leadTypeTag, `Borough: ${body.borough}`];
+
+      // Create real GHL contact
+      const ghlContact = await createGHLContact({
+        fullName: body.fullName,
+        phone: body.mobilePhone,
+        email: body.email,
+        tags,
+        source: 'Website Vacancy Form',
+        borough: body.borough,
+      });
 
       const newLead: VacancyLead = {
         id: 'ghl_lead_' + Date.now(),
@@ -116,7 +191,7 @@ async function startServer() {
         companyName: body.companyName || '',
         additionalInfo: body.additionalInfo || '',
         consentAgreed: body.consentAgreed ?? true,
-        tags: ['Website - Landlord Lead', leadTypeTag],
+        tags,
         pipelineStage: 'New - Landlord Inquiry',
         assignedTo: 'Joy Chowdhury (Keller Williams Realty Landmark II)',
         utmSource: body.utmSource || 'direct',
@@ -124,10 +199,11 @@ async function startServer() {
         utmCampaign: body.utmCampaign || 'nyc_landlord_acquisition',
         pageUrl: body.pageUrl || req.headers.referer || 'https://nyrealtorjoy.com',
         createdAt: new Date().toISOString(),
+        ghlContactId: ghlContact?.id,
       };
 
       leadsStore.unshift(newLead);
-      console.log(`[GHL CRM] New Landlord Lead: ${newLead.fullName} (${newLead.mobilePhone}) - ${newLead.borough}`);
+      console.log(`[API] New Landlord Lead: ${newLead.fullName} | ${newLead.borough} | GHL: ${ghlContact?.id || 'pending token'}`);
 
       return res.status(200).json({
         success: true,
@@ -136,8 +212,9 @@ async function startServer() {
         crmStatus: {
           pipelineStage: 'New',
           assignedAgent: 'Joy Chowdhury',
-          tags: newLead.tags,
+          tags,
           confirmationSent: true,
+          ghlContactId: ghlContact?.id || null,
         },
       });
     } catch (err: any) {
@@ -146,13 +223,20 @@ async function startServer() {
     }
   });
 
-  // 2. Book Landlord Consultation Endpoint
-  app.post('/api/book-consultation', (req, res) => {
+  // 2. Book Landlord Consultation
+  app.post('/api/book-consultation', async (req, res) => {
     try {
       const { fullName, phone, email, consultationType, date, timeSlot, borough, notes } = req.body;
       if (!fullName || !phone || !email || !date || !timeSlot) {
         return res.status(400).json({ error: 'Missing required booking details' });
       }
+
+      const ghlContact = await createGHLContact({
+        fullName, phone, email,
+        tags: ['Website - Consultation Booking', `Type: ${consultationType || 'phone'}`],
+        source: 'Website Booking Form',
+        borough,
+      });
 
       const booking: ConsultationBooking = {
         id: 'ghl_appt_' + Date.now(),
@@ -163,26 +247,64 @@ async function startServer() {
         notes: notes || '',
         status: 'Confirmed',
         createdAt: new Date().toISOString(),
+        ghlContactId: ghlContact?.id,
       };
 
       bookingsStore.unshift(booking);
-      console.log(`[GHL CRM] Consultation Scheduled: ${fullName} on ${date} at ${timeSlot}`);
+      console.log(`[API] Consultation booked: ${fullName} on ${date} at ${timeSlot} | GHL: ${ghlContact?.id || 'pending token'}`);
 
-      return res.status(200).json({ success: true, message: 'Landlord consultation booked successfully.', booking });
+      return res.status(200).json({ success: true, message: 'Consultation booked successfully.', booking });
     } catch (err: any) {
       console.error('Error in book-consultation:', err);
       return res.status(500).json({ error: 'Failed to schedule consultation' });
     }
   });
 
-  // 3. Request Landlord Guide Endpoint
-  app.post('/api/guide-request', (req, res) => {
-    const { email, fullName } = req.body;
-    console.log(`[GHL CRM] NYC Landlord Guide requested by ${fullName || 'Landlord'} (${email})`);
+  // 3. Guide Request — creates GHL contact with guide tag
+  app.post('/api/guide-request', async (req, res) => {
+    const { email, fullName, phone } = req.body;
+
+    await createGHLContact({
+      fullName, phone, email,
+      tags: ['Website - Guide Download', 'Nurture: NYC Landlord Guide'],
+      source: 'Website Guide Modal',
+    });
+
+    console.log(`[API] Guide requested by ${fullName || 'Landlord'} (${email})`);
     return res.status(200).json({ success: true, message: 'The NYC Landlord Guide link has been sent to your email.' });
   });
 
-  // 4. Cloudflare Proxy & DNS Status Endpoint
+  // 4. Contact Form — FIXED endpoint (was /api/leads, now /api/contact)
+  app.post('/api/contact', async (req, res) => {
+    try {
+      const { fullName, mobilePhone, email, role, notes, borough } = req.body;
+      if (!fullName || !email) {
+        return res.status(400).json({ error: 'Missing required contact details' });
+      }
+
+      const ghlContact = await createGHLContact({
+        fullName,
+        phone: mobilePhone,
+        email,
+        tags: ['Website - Contact Form', 'General Inquiry'],
+        source: 'Website Contact Form',
+        notes,
+      });
+
+      console.log(`[API] Contact form: ${fullName} (${email}) | GHL: ${ghlContact?.id || 'pending token'}`);
+
+      return res.status(200).json({
+        success: true,
+        message: 'Message received. Joy Chowdhury will respond shortly.',
+        ghlContactId: ghlContact?.id || null,
+      });
+    } catch (err: any) {
+      console.error('Error in /api/contact:', err);
+      return res.status(500).json({ error: 'Failed to process contact request' });
+    }
+  });
+
+  // 5. Cloudflare Status
   app.get('/api/cloudflare-status', (req, res) => {
     const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
     const hasToken = Boolean(process.env.CLOUDFLARE_API_TOKEN);
@@ -195,39 +317,31 @@ async function startServer() {
     });
   });
 
-  // 5. View All Pipeline Leads (CRM inspection preview)
+  // 6. View All Pipeline Leads (CRM inspection preview)
   app.get('/api/leads', (req, res) => {
     res.json({
       totalLeads: leadsStore.length,
       totalBookings: bookingsStore.length,
+      ghlConnected: Boolean(GHL_LOCATION_ID && GHL_PRIVATE_TOKEN),
       leads: leadsStore,
       bookings: bookingsStore,
     });
   });
 
-  // 6. AI Chat Endpoint (OpenRouter - Real Estate AI Assistant)
+  // 7. AI Chat Endpoint (OpenRouter - Real Estate AI Assistant)
   app.post('/api/ai-chat', async (req, res) => {
     try {
       const { message, history } = req.body;
-      if (!message) {
-        return res.status(400).json({ error: 'Message is required' });
-      }
+      if (!message) return res.status(400).json({ error: 'Message is required' });
 
       const openRouterKey = process.env.OPENROUTER_API_KEY;
-      if (!openRouterKey) {
-        return res.status(503).json({ error: 'AI service not configured. Set OPENROUTER_API_KEY in environment.' });
-      }
+      if (!openRouterKey) return res.status(503).json({ error: 'AI service not configured. Set OPENROUTER_API_KEY.' });
 
       const systemPrompt = `You are Joy Chowdhury's AI assistant for NY Realtor Joy (nyrealtorjoy.com).
 Joy is a Licensed Real Estate Salesperson at Keller Williams Realty Landmark II, located at 75-35 31st Ave, Suite 202, Jackson Heights, NY 11370.
-She specializes in:
-- NYC Landlord Vacancy Support & Rental Placement
-- CityFHEPS voucher assistance
-- Section 8 / NYCHA program guidance  
-- HRA paperwork support
-- Unit placement across Queens, Brooklyn, Manhattan, Bronx, and Staten Island
+She specializes in NYC Landlord Vacancy Support, CityFHEPS voucher assistance, Section 8/NYCHA guidance, HRA paperwork support, and unit placement across all 5 NYC boroughs.
 Contact: 917-565-4788 | nyjoy@kw.com
-Always be professional, helpful, and guide landlords toward booking a consultation with Joy.`;
+Always be professional, helpful, and guide landlords to book a consultation with Joy.`;
 
       const messages = [
         { role: 'system', content: systemPrompt },
@@ -243,25 +357,19 @@ Always be professional, helpful, and guide landlords toward booking a consultati
           'X-Title': 'NY Realtor Joy - Joy Chowdhury KW Realty',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          model: 'openai/gpt-4o',
-          messages,
-          max_tokens: 600,
-          temperature: 0.7,
-        }),
+        body: JSON.stringify({ model: 'openai/gpt-4o', messages, max_tokens: 600, temperature: 0.7 }),
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('[OpenRouter] API Error:', errorText);
+        const errText = await response.text();
+        console.error('[OpenRouter] API Error:', errText);
         return res.status(502).json({ error: 'AI service temporarily unavailable' });
       }
 
       const data = await response.json();
       const reply = data.choices?.[0]?.message?.content
-        || 'I apologize, I could not generate a response. Please call Joy directly at 917-565-4788.';
+        || 'I apologize, I could not generate a response. Please call Joy at 917-565-4788.';
 
-      console.log('[OpenRouter] AI response generated successfully');
       return res.status(200).json({ reply, model: data.model || 'openai/gpt-4o' });
     } catch (err: any) {
       console.error('[OpenRouter] Endpoint error:', err);
@@ -269,24 +377,17 @@ Always be professional, helpful, and guide landlords toward booking a consultati
     }
   });
 
-  // Vite middleware setup
+  // Vite middleware
   if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
+    const vite = await createViteServer({ server: { middlewareMode: true }, appType: 'spa' });
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(__dirname, 'dist');
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
+    app.get('*', (req, res) => res.sendFile(path.join(distPath, 'index.html')));
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://0.0.0.0:${PORT}`);
-  });
+  app.listen(PORT, '0.0.0.0', () => console.log(`Server running on http://0.0.0.0:${PORT}`));
 }
 
 startServer();

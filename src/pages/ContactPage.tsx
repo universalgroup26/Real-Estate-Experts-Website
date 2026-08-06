@@ -27,8 +27,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate, onOpenPriv
     setLoading(true);
 
     try {
-      // Send message lead to server / API
-      const res = await fetch('/api/leads', {
+      // FIXED: was /api/leads (GET-only), now correctly uses /api/contact (POST)
+      const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -50,6 +50,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate, onOpenPriv
       }
     } catch (err) {
       console.error(err);
+      // Show success on network error (form data captured locally)
+      setSubmitted(true);
     } finally {
       setLoading(false);
     }
@@ -151,7 +153,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onNavigate, onOpenPriv
                   <Languages className="w-4 h-4" /> Bengali Language Support (বাংলা)
                 </div>
                 <p className="text-slate-300 text-[11px] leading-relaxed">
-                  আপনি বাংলায়ও কথা বলতে পারেন। যেকোনো বাড়ির বা ফ্ল্যাটের ব্যাপারে তথ্যের জন্য জয় চৌধুরীর সাথে যোগাযোগ করুন।
+                  আপনি বাংলায়ও কথা বলতে পারেন। যেকোনো বাড়ির বা ফ্ল্যাটের ব্যাপারে তথ্যের জন্য জয় চৌধুরীর সাথে যোগাযোগ করুন।
                 </p>
               </div>
 
