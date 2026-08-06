@@ -18,6 +18,7 @@ import { Footer } from './components/Footer';
 import { LandlordGuideModal } from './components/LandlordGuideModal';
 import { PrivacyTermsModal } from './components/PrivacyTermsModal';
 import { CrmPipelineDrawer } from './components/CrmPipelineDrawer';
+import { FloatingChat } from './components/FloatingChat';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<string>('home');
@@ -314,6 +315,9 @@ export default function App() {
         isOpen={crmDrawerOpen}
         onClose={() => setCrmDrawerOpen(false)}
       />
+
+              {/* Floating AI Chat */}
+        <FloatingChat />
 
     </div>
   );
