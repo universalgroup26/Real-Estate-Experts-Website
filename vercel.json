@@ -9,6 +9,14 @@
           "value": "app.nyrealtorjoy.com"
         }
       ]
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/((?!sitemap.xml|robots.txt|llm.txt|favicon.ico|.*\\..*).*)",
+      "destination": "/index.html"
     }
   ]
 }
