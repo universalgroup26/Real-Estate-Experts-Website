@@ -147,5 +147,31 @@
 
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+  
+    <!-- ===== GoHighLevel Live Chat Widget ===== -->
+    <!-- To activate: In GHL → Settings → Chat Widgets → Copy Widget ID below -->
+    <script>
+      window.__GHL_CHAT_CONFIG__ = {
+        locationId: 'fXzvnUknGtVQu6dI1Hxl',
+        primaryColor: '#2DD4BF',
+        secondaryColor: '#0B192C',
+        buttonText: 'Chat with Joy',
+        welcomeMsg: 'Hi! I \u2019m Joy Chowdhury. How can I help you with your NYC vacancy today?',
+        autoOpen: false,
+        position: 'right'
+      };
+    </script>
+    <!--
+      NEXT STEP: After creating your Chat Widget in GHL Settings, replace the comment below
+      with your actual widget embed code (Settings → Chat Widget → Copy Embed Code):
+
+      <script src="https://widgets.leadconnectorhq.com/loader.js"
+        data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
+        data-widget-id="YOUR_GHL_WIDGET_ID_HERE"
+        defer>
+      </script>
+    -->
+    <!-- ===== End GoHighLevel Chat Widget ===== -->
+
   </body>
 </html>
