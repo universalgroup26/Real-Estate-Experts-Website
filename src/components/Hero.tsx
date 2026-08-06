@@ -1,173 +1,341 @@
-import React from 'react';
-import { ArrowRight, Phone, CheckCircle2, ShieldCheck, MapPin, Building2, FileText } from 'lucide-react';
-import { motion } from 'motion/react';
+import React, { useRef } from 'react';
+import { ArrowRight, Phone, CheckCircle2, ShieldCheck, MapPin, Building2, FileText, Star } from 'lucide-react';
+import { motion, useScroll, useTransform, useSpring } from 'motion/react';
 import { BUSINESS_INFO } from '../data/content';
+import {
+  staggerContainer,
+  staggerCard,
+  fadeUp,
+  slideLeft,
+  slideRight,
+  textReveal,
+  scaleUp,
+  staggerFast,
+  staggerBadge,
+  viewport,
+  floatAnimation,
+  pulseGlow,
+  EASE_OUT_EXPO,
+} from '../utils/animations';
 
 interface HeroProps {
   onOpenSubmitForm: () => void;
   onOpenBooking: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenSubmitForm, onOpenBooking }) => {
-  return (
-    <section id="home" className="relative bg-[#0B192C] text-white pt-8 pb-16 lg:pt-16 lg:pb-24 overflow-hidden border-b border-slate-800">
-      {/* Subtle Background Glow Accents */}
-      <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 -mb-12 -ml-12 w-96 h-96 bg-[#D12027]/10 rounded-full blur-3xl pointer-events-none" />
+// Floating particle positions (deterministic)
+const PARTICLES = [
+  { x: '8%',  y: '15%', size: 2,   delay: 0,   dur: 4.5 },
+  { x: '22%', y: '70%', size: 1.5, delay: 0.8, dur: 5.2 },
+  { x: '55%', y: '12%', size: 3,   delay: 1.5, dur: 3.8 },
+  { x: '78%', y: '55%', size: 2,   delay: 0.3, dur: 6.0 },
+  { x: '91%', y: '22%', size: 1.5, delay: 2.1, dur: 4.1 },
+  { x: '65%', y: '85%', size: 2.5, delay: 1.2, dur: 5.5 },
+  { x: '42%', y: '40%', size: 1,   delay: 0.6, dur: 4.8 },
+  { x: '15%', y: '90%', size: 2,   delay: 1.8, dur: 3.5 },
+];
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          {/* Left Text Content Column */}
+export const Hero: React.FC<HeroProps> = ({ onOpenSubmitForm, onOpenBooking }) => {
+  const containerRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end start'] });
+
+  // Parallax transforms
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '25%']);
+  const orb1Y = useTransform(scrollYProgress, [0, 1], ['0px', '-80px']);
+  const orb2Y = useTransform(scrollYProgress, [0, 1], ['0px', '60px']);
+  const orb3Y = useTransform(scrollYProgress, [0, 1], ['0px', '-40px']);
+  const textY  = useTransform(scrollYProgress, [0, 1], ['0px', '50px']);
+  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+
+  const smoothBgY = useSpring(bgY, { stiffness: 60, damping: 20 });
+  const smoothTextY = useSpring(textY, { stiffness: 60, damping: 20 });
+
+  return (
+    <section
+      ref={containerRef}
+      id="home"
+      className="relative bg-[#0B192C] text-white pt-8 pb-16 lg:pt-16 lg:pb-28 overflow-hidden border-b border-slate-800"
+    >
+      {/* ── Animated Gradient Orbs (parallax) ── */}
+      <motion.div style={{ y: orb1Y }} className="absolute inset-0 pointer-events-none">
+        <motion.div
+          animate={pulseGlow}
+          className="absolute top-[-80px] right-[-60px] w-[520px] h-[520px] rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(45,212,191,0.12) 0%, transparent 70%)' }}
+        />
+      </motion.div>
+
+      <motion.div style={{ y: orb2Y }} className="absolute inset-0 pointer-events-none">
+        <motion.div
+          animate={{ ...pulseGlow, transition: { ...pulseGlow.transition, delay: 1 } }}
+          className="absolute bottom-[-100px] left-[-80px] w-[480px] h-[480px] rounded-full"
+          style={{ background: 'radial-gradient(circle, rgba(209,32,39,0.10) 0%, transparent 70%)' }}
+        />
+      </motion.div>
+
+      <motion.div style={{ y: orb3Y }} className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full opacity-30"
+          style={{ background: 'radial-gradient(circle, rgba(13,33,55,0.6) 0%, transparent 65%)' }}
+        />
+      </motion.div>
+
+      {/* ── Floating Particles ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {PARTICLES.map((p, i) => (
           <motion.div
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            key={i}
+            className="absolute rounded-full bg-teal-400"
+            style={{ left: p.x, top: p.y, width: p.size, height: p.size }}
+            animate={{
+              y: [0, -14, 0],
+              opacity: [0.15, 0.55, 0.15],
+            }}
+            transition={{
+              duration: p.dur,
+              delay: p.delay,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+        ))}
+      </div>
+
+      {/* ── Grid Lines (subtle depth) ── */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(45,212,191,1) 1px, transparent 1px), linear-gradient(90deg, rgba(45,212,191,1) 1px, transparent 1px)',
+          backgroundSize: '60px 60px',
+        }}
+      />
+
+      {/* ── Main Content ── */}
+      <motion.div
+        style={{ y: smoothTextY, opacity }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+          {/* Left: Text Column */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
             className="lg:col-span-7 space-y-6"
           >
-            
-            {/* Brokerage & Badge */}
-            <div className="inline-flex flex-wrap items-center gap-2 bg-slate-800/90 border border-slate-700/80 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-200 shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+            {/* Badge */}
+            <motion.div variants={staggerBadge}
+              className="inline-flex flex-wrap items-center gap-2 bg-slate-800/90 border border-teal-500/20 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-200 shadow-sm"
+            >
+              <motion.span
+                className="w-2 h-2 rounded-full bg-teal-400"
+                animate={{ opacity: [1, 0.3, 1] }}
+                transition={{ duration: 1.8, repeat: Infinity }}
+              />
               <span className="font-semibold text-white">Keller Williams Realty Landmark II</span>
               <span className="text-slate-500">•</span>
-              <span className="text-slate-300 font-normal">NYC Rental Assistance Specialist</span>
-            </div>
+              <span className="text-teal-400 font-medium">NYC Rental Assistance Specialist</span>
+            </motion.div>
 
-            {/* Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold tracking-tight text-white leading-tight">
-              NYC Landlords: <br className="hidden sm:inline" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-teal-300">
-                Have a Vacancy?
-              </span>
-            </h1>
+            {/* Headline — stagger word by word */}
+            <motion.div variants={fadeUp} className="overflow-hidden">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold tracking-tight text-white leading-tight">
+                NYC Landlords:{' '}
+                <br className="hidden sm:inline" />
+                <motion.span
+                  className="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-teal-200 to-white"
+                  animate={{
+                    backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                  }}
+                  transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+                  style={{ backgroundSize: '200% 200%' }}
+                >
+                  Have a Vacancy?
+                </motion.span>
+              </h1>
+            </motion.div>
 
-            {/* Supporting Message */}
-            <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal max-w-2xl">
-              Explore CityFHEPS and Section 8 rental opportunities with tenant-matching, paperwork, scheduling, and inspection-process support from an experienced NYC real estate professional.
-            </p>
+            {/* Subheadline */}
+            <motion.p variants={textReveal}
+              className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal max-w-2xl"
+            >
+              Explore CityFHEPS and Section 8 rental opportunities with tenant-matching, paperwork, scheduling, and inspection-process support from an experienced NYC real estate professional.
+            </motion.p>
 
-            {/* Quick Feature Pills */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs font-medium text-slate-300">
-              <div className="flex items-start gap-2 bg-slate-800/50 border border-slate-700/60 p-2.5 rounded-lg">
-                <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
-                <span>Zero-stress document & packet preparation</span>
-              </div>
-              <div className="flex items-start gap-2 bg-slate-800/50 border border-slate-700/60 p-2.5 rounded-lg">
-                <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
-                <span>Inspection walkthrough & scheduling aid</span>
-              </div>
-              <div className="flex items-start gap-2 bg-slate-800/50 border border-slate-700/60 p-2.5 rounded-lg">
-                <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
-                <span>Consistent screening with lawful criteria</span>
-              </div>
-              <div className="flex items-start gap-2 bg-slate-800/50 border border-slate-700/60 p-2.5 rounded-lg">
-                <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
-                <span>1-on-1 landlord guidance by Joy Chowdhury</span>
-              </div>
-            </div>
+            {/* Feature Pills — stagger grid */}
+            <motion.div
+              variants={staggerFast}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2"
+            >
+              {[
+                'Zero-stress document & packet preparation',
+                'Inspection walkthrough & scheduling aid',
+                'Consistent screening with lawful criteria',
+                '1-on-1 landlord guidance by Joy Chowdhury',
+              ].map((text, i) => (
+                <motion.div
+                  key={i}
+                  variants={staggerCard}
+                  whileHover={{ scale: 1.02, borderColor: 'rgba(45,212,191,0.4)' }}
+                  className="flex items-start gap-2 bg-slate-800/50 border border-slate-700/60 p-2.5 rounded-lg text-xs font-medium text-slate-300 cursor-default transition-colors"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
+                  <span>{text}</span>
+                </motion.div>
+              ))}
+            </motion.div>
 
-            {/* Primary & Secondary CTAs */}
-            <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <button
+            {/* CTAs */}
+            <motion.div variants={fadeUp} className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <motion.button
                 onClick={onOpenSubmitForm}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-white bg-[#D12027] hover:bg-[#b51b21] transition-all shadow-xl hover:shadow-[#D12027]/25 active:scale-98 cursor-pointer group"
+                whileHover={{ scale: 1.03, boxShadow: '0 0 24px rgba(209,32,39,0.4)' }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-white bg-[#D12027] transition-all shadow-xl cursor-pointer group"
               >
                 <span>Submit Your Vacancy</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+              </motion.button>
 
-              <a
+              <motion.a
                 href={`tel:${BUSINESS_INFO.mobilePhone}`}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-slate-900 bg-teal-400 hover:bg-teal-300 transition-all shadow-lg active:scale-98 cursor-pointer"
+                whileHover={{ scale: 1.03, boxShadow: '0 0 20px rgba(45,212,191,0.35)' }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-slate-900 bg-teal-400 hover:bg-teal-300 transition-all shadow-lg cursor-pointer"
               >
                 <Phone className="w-4 h-4" />
-                <span>Speak With Joy ({BUSINESS_INFO.mobilePhone})</span>
-              </a>
-            </div>
+                <span>Speak With Joy</span>
+              </motion.a>
+            </motion.div>
 
-            {/* Supporting Trust Line */}
-            <div className="pt-2 flex items-center gap-2 text-xs text-slate-400 font-medium border-t border-slate-800/80 pt-4">
-              <MapPin className="w-4 h-4 text-[#D12027] flex-shrink-0" />
-              <span>Serving landlords and property managers across all five NYC boroughs (Manhattan, Brooklyn, Queens, Bronx, Staten Island).</span>
-            </div>
-
+            {/* Trust Indicators */}
+            <motion.div variants={staggerFast} className="flex flex-wrap gap-4 pt-2">
+              {[
+                { icon: Star, label: '5★ Keller Williams Agent' },
+                { icon: ShieldCheck, label: 'Licensed NYC Realtor' },
+                { icon: MapPin, label: 'Jackson Heights, Queens' },
+                { icon: Building2, label: 'All 5 NYC Boroughs' },
+              ].map(({ icon: Icon, label }, i) => (
+                <motion.div
+                  key={i}
+                  variants={staggerBadge}
+                  className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium"
+                >
+                  <Icon className="w-3.5 h-3.5 text-teal-500" />
+                  <span>{label}</span>
+                </motion.div>
+              ))}
+            </motion.div>
           </motion.div>
 
-          {/* Right Image Visual Card Column */}
+          {/* Right: Stats / Social Proof Column */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-5"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="lg:col-span-5 flex flex-col gap-4"
           >
-            <div className="relative mx-auto max-w-md lg:max-w-none">
-              
-              {/* Outer Glow Frame */}
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-teal-500/20 via-[#D12027]/20 to-slate-700/30 blur-xl opacity-75" />
-
-              {/* Card Frame */}
-              <div className="relative rounded-2xl bg-slate-900 border border-slate-700/80 overflow-hidden shadow-2xl">
-                
-                {/* Visual Image */}
-                <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-slate-800">
-                  <img
-                    src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1000&q=80"
-                    alt="Authentic New York City residential apartment building with high-quality architecture"
-                    className="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-700"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-                  
-                  {/* Floating Badge on Image */}
-                  <div className="absolute top-3 left-3 bg-[#0B192C]/90 backdrop-blur-md border border-slate-700 text-white text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 font-semibold">
-                    <Building2 className="w-3.5 h-3.5 text-teal-400" />
-                    <span>NYC Multifamily & Rental Support</span>
+            {/* Main Stat Card */}
+            <motion.div
+              variants={scaleUp}
+              whileHover={{ y: -4, boxShadow: '0 20px 60px rgba(45,212,191,0.15)' }}
+              className="relative bg-gradient-to-br from-[#0d2137] to-[#091424] border border-teal-500/20 rounded-2xl p-6 shadow-2xl overflow-hidden"
+            >
+              <motion.div
+                className="absolute -top-12 -right-12 w-32 h-32 rounded-full"
+                style={{ background: 'radial-gradient(circle, rgba(45,212,191,0.15), transparent 70%)' }}
+                animate={pulseGlow}
+              />
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 rounded-lg bg-teal-500/20 border border-teal-500/30 flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-teal-400" />
                   </div>
+                  <span className="text-xs font-semibold text-teal-400 uppercase tracking-widest">CityFHEPS 2026</span>
+                </div>
 
-                  {/* Agent Card Overlay */}
-                  <div className="absolute bottom-3 left-3 right-3 bg-slate-900/90 backdrop-blur-md border border-slate-700/90 rounded-xl p-3 flex items-center justify-between gap-3 text-white">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#D12027] flex items-center justify-center font-bold text-white text-sm shadow">
-                        JC
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-white">{BUSINESS_INFO.agentName}</div>
-                        <div className="text-[11px] text-slate-300">{BUSINESS_INFO.title}</div>
-                        <div className="text-[10px] text-teal-300">{BUSINESS_INFO.brokerage}</div>
-                      </div>
-                    </div>
-                    <button
-                      onClick={onOpenBooking}
-                      className="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-teal-400 text-slate-900 hover:bg-teal-300 transition-colors whitespace-nowrap cursor-pointer"
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { value: '$3,900', label: '3-BR Max Rent (CityFHEPS)', highlight: true },
+                    { value: '15%', label: 'HRA Sign-On Bonus', highlight: false },
+                    { value: '$1,000', label: 'Unit Repair Incentive', highlight: false },
+                    { value: '0%', label: 'Broker Fee to Landlord', highlight: false },
+                  ].map(({ value, label, highlight }, i) => (
+                    <motion.div
+                      key={i}
+                      variants={staggerCard}
+                      className={`p-3 rounded-xl ${
+                        highlight
+                          ? 'bg-teal-500/15 border border-teal-500/30'
+                          : 'bg-slate-800/60 border border-slate-700/50'
+                      }`}
                     >
-                      Book Call
-                    </button>
-                  </div>
-
+                      <p className={`text-xl font-bold ${
+                        highlight ? 'text-teal-300' : 'text-white'
+                      }`}>{value}</p>
+                      <p className="text-[10px] text-slate-400 mt-0.5 leading-tight">{label}</p>
+                    </motion.div>
+                  ))}
                 </div>
-
-                {/* Card Lower Details */}
-                <div className="p-4 space-y-3 bg-slate-900/90 text-xs">
-                  <div className="flex items-center justify-between text-slate-300 font-medium">
-                    <span className="flex items-center gap-1.5">
-                      <FileText className="w-4 h-4 text-teal-400" />
-                      Landlord Guidance & Consultation
-                    </span>
-                    <span className="text-teal-400 font-bold">100% Free Initial Review</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-400">
-                    <ShieldCheck className="w-4 h-4 text-[#D12027] flex-shrink-0" />
-                    <span>Fair-Housing Compliant • Licensed Keller Williams Realtor</span>
-                  </div>
-                </div>
-
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
 
+            {/* Quick Action Cards */}
+            {[
+              {
+                icon: Building2,
+                title: 'Submit Vacant Unit',
+                desc: 'Intake form takes ~4 min',
+                color: 'from-[#D12027]/20 to-[#D12027]/5',
+                border: 'border-[#D12027]/30',
+                iconBg: 'bg-[#D12027]/20',
+                iconColor: 'text-[#D12027]',
+                action: onOpenSubmitForm,
+              },
+              {
+                icon: ShieldCheck,
+                title: 'Book a Consultation',
+                desc: 'Free 1-on-1 with Joy Chowdhury',
+                color: 'from-teal-500/15 to-teal-500/5',
+                border: 'border-teal-500/25',
+                iconBg: 'bg-teal-500/20',
+                iconColor: 'text-teal-400',
+                action: onOpenBooking,
+              },
+            ].map(({ icon: Icon, title, desc, color, border, iconBg, iconColor, action }, i) => (
+              <motion.button
+                key={i}
+                variants={staggerCard}
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={action}
+                className={`w-full text-left bg-gradient-to-br ${color} ${border} border rounded-xl p-4 cursor-pointer flex items-center gap-3 transition-all`}
+              >
+                <div className={`w-10 h-10 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0`}>
+                  <Icon className={`w-5 h-5 ${iconColor}`} />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white">{title}</p>
+                  <p className="text-[11px] text-slate-400">{desc}</p>
+                </div>
+                <ArrowRight className="w-4 h-4 text-slate-500 ml-auto" />
+              </motion.button>
+            ))}
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
+
+      {/* ── Scroll indicator ── */}
+      <motion.div
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ opacity }}
+      >
+        <div className="w-[1px] h-8 bg-gradient-to-b from-teal-400/60 to-transparent" />
+        <div className="w-1.5 h-1.5 rounded-full bg-teal-400/60" />
+      </motion.div>
     </section>
   );
 };
