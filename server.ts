@@ -61,7 +61,7 @@ async function startServer() {
 
   // API Endpoints
   app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', service: 'Real Estate Experts API' });
+    res.json({ status: 'ok', service: 'Real Estate Experts API', aiProvider: 'OpenRouter (openai/gpt-4o)' });
   });
 
   // Serve static SEO and AI context files
@@ -79,7 +79,7 @@ async function startServer() {
     res.sendFile(path.join(__dirname, 'public', 'llm.txt'));
   });
 
-  // 1. Vacancy Submission Endpoint (GoHighLevel CRM Integration simulation)
+  // 1. Vacancy Submission Endpoint (GoHighLevel CRM Integration)
   app.post('/api/submit-vacancy', (req, res) => {
     try {
       const body = req.body;
@@ -87,7 +87,6 @@ async function startServer() {
         return res.status(400).json({ error: 'Missing required landlord information' });
       }
 
-      // Determine Lead Type Tag based on inputs
       let leadTypeTag = 'Active Vacancy';
       if (body.role === 'Property Manager' || parseInt(body.unitCount) > 1 || body.unitCount === '5-10' || body.unitCount === '10+') {
         leadTypeTag = 'Property Manager';
@@ -123,16 +122,12 @@ async function startServer() {
         utmSource: body.utmSource || 'direct',
         utmMedium: body.utmMedium || 'website',
         utmCampaign: body.utmCampaign || 'nyc_landlord_acquisition',
-        pageUrl: body.pageUrl || req.headers.referer || 'https://nyjoy.kw.com',
+        pageUrl: body.pageUrl || req.headers.referer || 'https://nyrealtorjoy.com',
         createdAt: new Date().toISOString(),
       };
 
       leadsStore.unshift(newLead);
-
-      // Simulating GoHighLevel Automated Responses & Internal Alerts
-      console.log(`[GHL CRM] New Landlord Lead Created: ${newLead.fullName} (${newLead.mobilePhone}) - Assigned to Joy Chowdhury`);
-      console.log(`[GHL CRM] Notification SMS queued to Joy Chowdhury (917-565-4788): "New Landlord Lead: ${newLead.fullName}, Borough: ${newLead.borough}, Units: ${newLead.unitCount}"`);
-      console.log(`[GHL CRM] Confirmation Email & SMS queued to prospect (${newLead.email})`);
+      console.log(`[GHL CRM] New Landlord Lead: ${newLead.fullName} (${newLead.mobilePhone}) - ${newLead.borough}`);
 
       return res.status(200).json({
         success: true,
@@ -161,12 +156,9 @@ async function startServer() {
 
       const booking: ConsultationBooking = {
         id: 'ghl_appt_' + Date.now(),
-        fullName,
-        phone,
-        email,
+        fullName, phone, email,
         consultationType: consultationType || 'phone',
-        date,
-        timeSlot,
+        date, timeSlot,
         borough: borough || 'Queens',
         notes: notes || '',
         status: 'Confirmed',
@@ -174,14 +166,9 @@ async function startServer() {
       };
 
       bookingsStore.unshift(booking);
+      console.log(`[GHL CRM] Consultation Scheduled: ${fullName} on ${date} at ${timeSlot}`);
 
-      console.log(`[GHL CRM] Consultation Scheduled: ${fullName} on ${date} at ${timeSlot} (${consultationType})`);
-
-      return res.status(200).json({
-        success: true,
-        message: 'Landlord consultation booked successfully.',
-        booking,
-      });
+      return res.status(200).json({ success: true, message: 'Landlord consultation booked successfully.', booking });
     } catch (err: any) {
       console.error('Error in book-consultation:', err);
       return res.status(500).json({ error: 'Failed to schedule consultation' });
@@ -190,29 +177,25 @@ async function startServer() {
 
   // 3. Request Landlord Guide Endpoint
   app.post('/api/guide-request', (req, res) => {
-    const { email, fullName, phone } = req.body;
+    const { email, fullName } = req.body;
     console.log(`[GHL CRM] NYC Landlord Guide requested by ${fullName || 'Landlord'} (${email})`);
-    return res.status(200).json({
-      success: true,
-      message: 'The NYC Landlord Guide link has been sent to your email.',
-    });
+    return res.status(200).json({ success: true, message: 'The NYC Landlord Guide link has been sent to your email.' });
   });
 
-  // 4. Cloudflare Proxy & DNS Status Endpoint (Lazy Initialization)
+  // 4. Cloudflare Proxy & DNS Status Endpoint
   app.get('/api/cloudflare-status', (req, res) => {
     const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
     const hasToken = Boolean(process.env.CLOUDFLARE_API_TOKEN);
-
     res.json({
       configured: Boolean(accountId && hasToken),
       accountId: accountId ? `${accountId.substring(0, 6)}...` : null,
       service: 'Cloudflare Edge CDN & DNS Proxy',
-      domain: 'nyjoy.kw.com',
-      status: accountId && hasToken ? 'Active & Protected' : 'Environment configuration pending in .env.example'
+      domain: 'nyrealtorjoy.com',
+      status: accountId && hasToken ? 'Active & Protected' : 'Environment configuration pending',
     });
   });
 
-  // 5. View All Pipeline Leads (For CRM inspection preview)
+  // 5. View All Pipeline Leads (CRM inspection preview)
   app.get('/api/leads', (req, res) => {
     res.json({
       totalLeads: leadsStore.length,
@@ -220,6 +203,70 @@ async function startServer() {
       leads: leadsStore,
       bookings: bookingsStore,
     });
+  });
+
+  // 6. AI Chat Endpoint (OpenRouter - Real Estate AI Assistant)
+  app.post('/api/ai-chat', async (req, res) => {
+    try {
+      const { message, history } = req.body;
+      if (!message) {
+        return res.status(400).json({ error: 'Message is required' });
+      }
+
+      const openRouterKey = process.env.OPENROUTER_API_KEY;
+      if (!openRouterKey) {
+        return res.status(503).json({ error: 'AI service not configured. Set OPENROUTER_API_KEY in environment.' });
+      }
+
+      const systemPrompt = `You are Joy Chowdhury's AI assistant for NY Realtor Joy (nyrealtorjoy.com).
+Joy is a Licensed Real Estate Salesperson at Keller Williams Realty Landmark II, located at 75-35 31st Ave, Suite 202, Jackson Heights, NY 11370.
+She specializes in:
+- NYC Landlord Vacancy Support & Rental Placement
+- CityFHEPS voucher assistance
+- Section 8 / NYCHA program guidance  
+- HRA paperwork support
+- Unit placement across Queens, Brooklyn, Manhattan, Bronx, and Staten Island
+Contact: 917-565-4788 | nyjoy@kw.com
+Always be professional, helpful, and guide landlords toward booking a consultation with Joy.`;
+
+      const messages = [
+        { role: 'system', content: systemPrompt },
+        ...(Array.isArray(history) ? history : []),
+        { role: 'user', content: message },
+      ];
+
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${openRouterKey}`,
+          'HTTP-Referer': 'https://nyrealtorjoy.com',
+          'X-Title': 'NY Realtor Joy - Joy Chowdhury KW Realty',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'openai/gpt-4o',
+          messages,
+          max_tokens: 600,
+          temperature: 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[OpenRouter] API Error:', errorText);
+        return res.status(502).json({ error: 'AI service temporarily unavailable' });
+      }
+
+      const data = await response.json();
+      const reply = data.choices?.[0]?.message?.content
+        || 'I apologize, I could not generate a response. Please call Joy directly at 917-565-4788.';
+
+      console.log('[OpenRouter] AI response generated successfully');
+      return res.status(200).json({ reply, model: data.model || 'openai/gpt-4o' });
+    } catch (err: any) {
+      console.error('[OpenRouter] Endpoint error:', err);
+      return res.status(500).json({ error: 'Failed to process AI request' });
+    }
   });
 
   // Vite middleware setup
