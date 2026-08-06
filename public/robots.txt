@@ -2,8 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap Location
-Sitemap: https://nyjoy.kw.com/sitemap.xml
-Sitemap: https://nyjoy.kw.com/sitemap.html
+Sitemap: https://nyrealtorjoy.com/sitemap.xml
 
 # AI Engine Indexing Allowed
 User-agent: GPTBot
