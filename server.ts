@@ -198,7 +198,21 @@ async function startServer() {
     });
   });
 
-  // 4. View All Pipeline Leads (For CRM inspection preview)
+  // 4. Cloudflare Proxy & DNS Status Endpoint (Lazy Initialization)
+  app.get('/api/cloudflare-status', (req, res) => {
+    const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+    const hasToken = Boolean(process.env.CLOUDFLARE_API_TOKEN);
+
+    res.json({
+      configured: Boolean(accountId && hasToken),
+      accountId: accountId ? `${accountId.substring(0, 6)}...` : null,
+      service: 'Cloudflare Edge CDN & DNS Proxy',
+      domain: 'nyjoy.kw.com',
+      status: accountId && hasToken ? 'Active & Protected' : 'Environment configuration pending in .env.example'
+    });
+  });
+
+  // 5. View All Pipeline Leads (For CRM inspection preview)
   app.get('/api/leads', (req, res) => {
     res.json({
       totalLeads: leadsStore.length,
