@@ -1,0 +1,14 @@
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/app.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "app.nyrealtorjoy.com"
+        }
+      ]
+    }
+  ]
+}
